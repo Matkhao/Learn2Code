@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\TestController;
@@ -59,8 +60,3 @@ Route::delete('/courses/{id}',      [CoursesController::class, 'remove'])->name(
 
 // Frontend
 Route::get('/', [CoursesController::class, 'frontend'])->name('frontend');
-
-// Article page
-Route::get('/blog', function () {
-        return view('blog.index');
-});
