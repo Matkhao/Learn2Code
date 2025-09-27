@@ -22,6 +22,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Thai:wght@100..900&display=swap" rel="stylesheet">
 
+  <!-- Navbar CSS -->
+  <link href="{{ asset('css/navbar.css') }}" rel="stylesheet" />
+
   @yield('css_before')
 
   <style>
@@ -308,15 +311,30 @@
           <a class="nav-link" href="#" id="servicesDropdown" role="button">บริการ</a>
           <ul class="dropdown-menu" style="background:rgba(10,12,16,.85); backdrop-filter: blur(6px); border-radius: 16px" aria-labelledby="servicesDropdown">
             <li>
-              <i class="fa fa-file-code-o" aria-hidden="true"></i>
-              <a class="dropdown-item" href="#" style="color: #98a2b3">Web Development
-                <div class="text-start">
-                  <span>บริการให้คำปรึกษาพัฒนาเว็บไซต์ครบวงจร</span>
-                </div>
+              <a class="dropdown-item" href="#"><span class="menu-title">Web Development</span>
+                <div class="text-start">บริการให้คำปรึกษาพัฒนาเว็บไซต์ครบวงจร</div>
               </a>
             </li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
+            <li>
+              <a class="dropdown-item" href="#"><span class="menu-title">Mobile App Development</span>
+                <div class="text-start">ออกแบบและพัฒนาแอปพลิเคชันทั้ง iOS และ Android</div>
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#"><span class="menu-title">UI/UX Design</span>
+                <div class="text-start">สร้างประสบการณ์ผู้ใช้ที่ราบรื่นและอินเทอร์เฟซที่ทันสมัย</div>
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#"><span class="menu-title">IT Management</span>
+                <div class="text-start">บริการดูแลและจัดการระบบไอทีสำหรับองค์กร</div>
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#"><span class="menu-title">Software Testing</span>
+                <div class="text-start">ทดสอบและตรวจสอบคุณภาพซอฟต์แวร์เพื่อความเสถียรและปลอดภัย</div>
+              </a>
+            </li>
           </ul>
         </li>
         {{-- <li class="nav-item"><a class="nav-link" href="#">บริการ</a></li> --}}

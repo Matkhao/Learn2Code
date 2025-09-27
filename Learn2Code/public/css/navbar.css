@@ -1,13 +1,37 @@
-/* Hover effect */
-.dropdown-menu .dropdown-item:hover {
-    position: absolute;
-    width: 200px;
-    z-index: -999;
-    margin-top: 0;
-    opacity: 0;
-}
-
 .dropdown-menu:focus {
     outline: none;
     box-shadow: none;
+}
+
+.dropdown-menu .dropdown-item {
+  transition: all 0.25s ease; /* smooth effect */
+  color: #98a2b3; /* default text color */
+}
+
+.dropdown-menu .dropdown-item:hover {
+  background-color: #1b202b; /* Tailwind blue-500 */
+  color: #fff;
+  transform: scale(1.08); /* pop up effect */
+}
+
+.dropdown-menu .dropdown-item span {
+  display: inline-block;
+  transition: all 0.25s ease;
+}
+
+.dropdown-menu .dropdown-item:hover .menu-title{
+  font-weight: 500;
+  color: #2196f3;  /* hover text color */
+  transform: scale(1.1); /* text pop */
+}
+
+/* Remove white on active/focus */
+.dropdown-item:focus,
+.dropdown-item:active,
+.dropdown-item:hover {
+    background:rgba(10,12,16,.85) !important; /* your desired background */
+    color: #fff !important;           /* your desired text color */
+    outline: none !important;            /* remove outline on click */
+    box-shadow: none !important;         /* remove any shadow */
+    backdrop-filter: blur(6px); 
 }
