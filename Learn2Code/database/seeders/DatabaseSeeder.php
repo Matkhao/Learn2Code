@@ -13,6 +13,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // เรียก CategorySeeder เพื่อสร้างข้อมูลหมวดหมู่
+        $this->call([
+            CategorySeeder::class,
+        ]);
+
         // User::factory(10)->create();
 
         User::factory()->create([

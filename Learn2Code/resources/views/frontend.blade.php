@@ -5,12 +5,12 @@
 
 @section('navbar')
 @endsection
- 
- 
-@section('showProduct')    
+
+
+@section('showProduct')
 @endsection
 
- 
+
 
 @section('footer')
 @endsection

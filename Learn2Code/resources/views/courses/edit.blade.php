@@ -1,4 +1,4 @@
-@extends('home')
+@extends('layouts.backend')
 
 @section('css_before')
     <!-- Google Fonts -->
@@ -464,6 +464,35 @@
                 transition: none;
             }
         }
+
+        .input-icon.has-suffix {
+            position: relative;
+        }
+
+        .input-icon.has-suffix .form-control {
+            padding-right: 44px;
+        }
+
+        .suffix-btn {
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 34px;
+            min-width: 34px;
+            border: 1px solid var(--border);
+            background: #0f1420;
+            color: var(--text);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .suffix-btn:hover {
+            background: #151b2a;
+            color: #9ecbff;
+        }
     </style>
 @endsection
 
@@ -473,7 +502,8 @@
         <p><i class="bi bi-info-circle"></i> ปรับข้อมูลให้ตรงปัจจุบัน ชื่อ/ราคา/รูปปก/รายละเอียด</p>
     </div>
 
-    <form action="/courses/{{ $id }}" method="post" enctype="multipart/form-data" id="editForm" novalidate>
+    <form action="{{ route('admin.courses.update', $id) }}" method="post" enctype="multipart/form-data" id="editForm"
+        novalidate>
         @csrf
         @method('put')
 
@@ -502,19 +532,64 @@
                     @enderror
                 </div>
 
-                <!-- Category -->
+                {{-- Category (view-only + edit via modal) --}}
+                @php
+                    $catId = old('category_id', $category_id ?? null);
+                    $catName = isset($categories)
+                        ? optional($categories->firstWhere('id', $catId))->name
+                        : $category_name ?? null;
+                    $catDisplay = $catId ? ($catName ? "{$catId} - {$catName}" : (string) $catId) : '';
+                @endphp
+
                 <div class="mb-3">
                     <div class="label"><i class="bi bi-tags"></i> หมวดหมู่ (Category ID)</div>
-                    <div class="input-icon">
+                    <div class="input-icon has-suffix">
                         <span class="icon"><i class="bi bi-collection"></i></span>
-                        <input type="number" class="form-control" name="category_id"
-                            value="{{ old('category_id', $category_id) }}"
-                            placeholder="เช่น 1 (โปรแกรมมิ่ง) หรือ 2 (ออกแบบ)" data-field="category_id">
+
+                        {{-- ช่องที่เห็น --}}
+                        <input type="text" class="form-control" id="category_display" value="{{ $catDisplay }}"
+                            placeholder="เช่น 1 - ฐานข้อมูล" readonly>
+
+                        {{-- ค่าที่ submit จริง --}}
+                        <input type="hidden" name="category_id" id="category_id_input" value="{{ $catId }}">
+
+                        <button class="suffix-btn" type="button" id="btnEditCategory" aria-label="แก้ไขหมวดหมู่">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
                     </div>
                     @error('category_id')
                         <div class="text-danger mt-1"><i class="bi bi-exclamation-octagon"></i> {{ $message }}</div>
                     @enderror
                 </div>
+
+                <!-- Modal: เลือกหมวดหมู่ -->
+                <div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content"
+                            style="background:var(--panel); color:var(--text); border:1px solid var(--border);">
+                            <div class="modal-header">
+                                <h5 class="modal-title"><i class="bi bi-pencil-square me-1"></i> เปลี่ยนหมวดหมู่</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <label class="label mb-2"><i class="bi bi-collection"></i> เลือกหมวดหมู่</label>
+                                <select class="form-select" id="categorySelect">
+                                    @foreach ($categories as $cat)
+                                        <option value="{{ $cat->category_id }}">{{ $cat->category_id }} -
+                                            {{ $cat->name }}</option>
+                                    @endforeach
+                                </select>
+                                <small class="help d-block mt-2">กด “ตกลง” เพื่อใช้เลขหมวดหมู่ที่เลือก</small>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline" data-bs-dismiss="modal">ยกเลิก</button>
+                                <button type="button" class="btn btn-primary" id="btnApplyCategory">ตกลง</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
 
                 <!-- Provider -->
                 <div class="mb-3">
@@ -738,7 +813,8 @@
                     <input type="hidden" name="oldImg" value="{{ $cover_img }}">
                     <button type="submit" class="btn btn-primary"><i class="bi bi-check2-circle me-1"></i>
                         บันทึกการเปลี่ยนแปลง</button>
-                    <a href="/courses" class="btn btn-danger"><i class="bi bi-arrow-left-short me-1"></i> ยกเลิก</a>
+                    <a href="{{ route('admin.courses.index') }}" class="btn btn-danger"><i
+                            class="bi bi-arrow-left-short me-1"></i> ยกเลิก</a>
                 </div>
 
             </div>
@@ -749,6 +825,30 @@
 @section('js_before')
     @include('sweetalert::alert')
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const input = document.getElementById('category_id_input');
+            const select = document.getElementById('categorySelect');
+            const openBtn = document.getElementById('btnEditCategory');
+            const applyBtn = document.getElementById('btnApplyCategory');
+            const modalEl = document.getElementById('categoryModal');
+            const modal = (typeof bootstrap !== 'undefined' && bootstrap.Modal) ?
+                new bootstrap.Modal(modalEl) : null;
+
+            openBtn?.addEventListener('click', () => {
+                // sync ค่าใน select ให้ตรงกับค่าปัจจุบัน
+                if (input && select) {
+                    const cur = (input.value || '').toString();
+                    if (cur !== '') select.value = cur;
+                }
+                modal?.show();
+            });
+
+            applyBtn?.addEventListener('click', () => {
+                if (input && select) input.value = select.value; // เขียนค่าใหม่กลับไปที่ input (ส่งฟอร์ม)
+                modal?.hide();
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('editForm');
             if (!form) return;
@@ -1048,5 +1148,11 @@
             });
 
         });
+
+        window.setCategory = function(id, name) {
+            document.getElementById('category_display').value =
+                (name && String(name).trim()) ? `${id} - ${name}` : String(id);
+            document.getElementById('category_id_input').value = id;
+        };
     </script>
 @endsection

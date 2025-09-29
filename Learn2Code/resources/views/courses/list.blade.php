@@ -1,4 +1,4 @@
-@extends('home')
+@extends('layouts.backend')
 
 @section('css_before')
     <!-- Google Fonts -->
@@ -335,6 +335,17 @@
             margin: 14px 0;
         }
 
+        /* helper: ซ่อนคอลัมน์บนจอเล็ก */
+        .hide-sm {
+            display: table-cell;
+        }
+
+        @media (max-width:768px) {
+            .hide-sm {
+                display: none !important;
+            }
+        }
+
         /* ===== MOBILE LAYOUT (≤ 768px) – ปรับใหม่หมดให้สวย/อ่านง่าย ===== */
         @media (max-width:768px) {
 
@@ -539,7 +550,7 @@
 
     <div class="page-head">
         <h3><i class="bi bi-journal-code" aria-hidden="true"></i> จัดการคอร์สเรียน</h3>
-        <a href="/courses/adding" class="btn btn-primary btn-sm" aria-label="เพิ่มคอร์สเรียน">
+        <a href="{{ route('admin.courses.adding') }}" class="btn btn-primary btn-sm" aria-label="เพิ่มคอร์สเรียน">
             <i class="bi bi-plus-circle me-1" aria-hidden="true"></i> เพิ่มคอร์สเรียน
         </a>
     </div>
@@ -576,7 +587,7 @@
                 <tbody>
                     @foreach ($courses as $row)
                         @php
-                            $pk = $row->getKey();
+                            $pk = $row->course_id ?? $row->id ?? 0;
                             $hasImg =
                                 !empty($row->cover_img) &&
                                 \Illuminate\Support\Facades\Storage::disk('public')->exists($row->cover_img);
@@ -586,7 +597,7 @@
                                     ? asset('images/placeholder.png')
                                     : 'https://via.placeholder.com/640x360?text=No+Image');
 
-                            $category = $row->category ?? null;
+                            $categoryName = optional($row->category)->name;
                             $level = $row->level ?? null;
                             $duration = $row->duration_text ?? ($row->duration ?? null);
                             $lang = $row->language ?? '-';
@@ -612,7 +623,7 @@
 
                         <tr tabindex="0" data-id="{{ $pk }}" data-title="{{ $row->title }}"
                             data-description="{{ str_replace(['"', "\n", "\r"], ['\"', '\n', ''], (string) ($row->description ?? '')) }}"
-                            data-img="{{ $imgSrc }}" data-category="{{ $category }}"
+                            data-img="{{ $imgSrc }}" data-category="{{ optional($row->category)->name }}"
                             data-level="{{ $level }}" data-duration="{{ $duration }}"
                             data-language="{{ $lang }}" data-price-type="{{ $priceType }}"
                             data-price="{{ $priceVal }}" data-provider="{{ $provider }}"
@@ -648,11 +659,12 @@
                             </td>
 
                             <td class="text-center actions" data-label="แก้ไข">
-                                <a href="/courses/{{ $pk }}/edit" class="btn btn-primary btn-icon btn-sm"
+                                <a href="{{ route('admin.courses.edit', $pk) }}" class="btn btn-primary btn-icon btn-sm"
                                     data-no-modal="1" title="แก้ไขคอร์ส {{ $row->title }}"
                                     aria-label="แก้ไขคอร์ส {{ $row->title }}">
                                     <i class="bi bi-pencil-square" aria-hidden="true"></i>
                                 </a>
+                                {{-- (fixed) attributes ย้ายเข้ามาในแท็ก ไม่ให้แสดงเป็นข้อความ --}}
                             </td>
 
                             <td class="text-center actions" data-label="ลบ">
@@ -661,10 +673,12 @@
                                     onclick="deleteConfirm({{ $pk }})">
                                     <i class="bi bi-trash" aria-hidden="true"></i>
                                 </button>
-                                <form id="delete-form-{{ $pk }}" action="/courses/{{ $pk }}"
-                                    method="POST" style="display:none;">
+                                <form id="delete-form-{{ $pk }}"
+                                    action="{{ route('admin.courses.destroy', $pk) }}" method="POST"
+                                    style="display:none;">
                                     @csrf @method('delete')
                                 </form>
+                                {{-- (fixed) method/style รวมในแท็ก form ไม่ให้ข้อความหลุดออกมา --}}
                             </td>
                         </tr>
                     @endforeach
@@ -891,7 +905,8 @@
                 }
 
                 if (d.id) {
-                    editBtn.href = `/courses/${d.id}/edit`;
+                    // (fixed) ให้ไปหน้าแก้ไขฝั่งหลังบ้าน
+                    editBtn.href = '{{ url('/admin/courses') }}/' + d.id + '/edit';
                     editBtn.style.display = '';
                 } else {
                     editBtn.style.display = 'none';

@@ -1,4 +1,4 @@
-@extends('home')
+@extends('layouts.backend')
 
 @section('css_before')
     <!-- Google Fonts -->
@@ -295,7 +295,8 @@
         <p><i class="bi bi-info-circle"></i> กรอกข้อมูลให้ครบถ้วนเพื่อช่วยให้ผู้เรียนตัดสินใจได้เร็วขึ้น</p>
     </div>
 
-    <form action="/courses" method="post" enctype="multipart/form-data" id="createForm" novalidate>
+    <form action="{{ route('admin.courses.store') }}" method="post" enctype="multipart/form-data" id="createForm"
+        novalidate>
         @csrf
 
         <div class="card-ui">
@@ -326,13 +327,19 @@
                 <div class="row g-3">
                     <!-- Category -->
                     <div class="col-md-6">
-                        <div class="label"><i class="bi bi-tags"></i> หมวดหมู่ (Category ID) <span class="req">*</span>
+                        <div class="label"><i class="bi bi-tags"></i> หมวดหมู่ (Category) <span class="req">*</span>
                         </div>
                         <div class="input-icon">
                             <span class="icon"><i class="bi bi-collection"></i></span>
-                            <input type="number" class="form-control" name="category_id" required min="0"
-                                max="999999" placeholder="เช่น 1 (โปรแกรมมิ่ง), 2 (ออกแบบ) ..."
-                                value="{{ old('category_id') }}">
+                            <select class="form-select" name="category_id" required>
+                                <option value="">เลือกหมวดหมู่</option>
+                                @foreach ($categories as $cat)
+                                    <option value="{{ $cat->category_id }}"
+                                        {{ old('category_id') == $cat->category_id ? 'selected' : '' }}>
+                                        {{ $cat->name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                         @error('category_id')
                             <div class="text-danger mt-1"><i class="bi bi-exclamation-octagon"></i> {{ $message }}</div>
@@ -544,7 +551,7 @@
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-check2-circle me-1"></i> บันทึกคอร์ส
                     </button>
-                    <a href="/courses" class="btn btn-danger">
+                    <a href="{{ route('admin.courses.index') }}" class="btn btn-danger">
                         <i class="bi bi-arrow-left-short me-1"></i> ยกเลิก
                     </a>
                 </div>

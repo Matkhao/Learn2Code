@@ -152,14 +152,15 @@
                         {{-- หน้าแรก --}}
                         <a href="/"
                             class="list-group-item list-group-item-action {{ request()->is('/') ? 'active' : '' }}">
-                            <i class="bi bi-house-door me-2"></i> หน้าแรก
+                            <i class="bi bi-house-door me-2"></i> หน้าหลัก
                         </a>
 
                         {{-- คอร์สเรียน --}}
-                        <a href="/courses"
+                        <a href="/admin/courses"
                             class="list-group-item list-group-item-action {{ request()->is('courses*') ? 'active' : '' }}">
                             <i class="bi bi-journal-code me-2"></i> คอร์สเรียน
                         </a>
+
 
                     </div>
                     @yield('sidebarMenu')

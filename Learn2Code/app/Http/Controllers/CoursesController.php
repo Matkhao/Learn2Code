@@ -3,14 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\CoursesModel;
+use App\Models\CategoryModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Pagination\Paginator;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class CoursesController extends Controller
 {
+
     /* =========================================================
      * Utilities
      * =======================================================*/
@@ -67,6 +71,20 @@ class CoursesController extends Controller
         }
     }
 
+    // ===== เพิ่มใหม่: คำนวณค่าเฉลี่ยจาก tbl_reviews แล้วอัปเดตลง tbl_courses.avg_rating =====
+    private function recalcAvgRating(int $courseId): void
+    {
+        $avg = DB::table('tbl_reviews')
+            ->where('course_id', $courseId)
+            ->avg('rating');
+
+        $avg = $avg === null ? 0 : round(((float) $avg) * 2) / 2; // ปัดครึ่งดาว .0/.5
+
+        DB::table('tbl_courses')
+            ->where('course_id', $courseId)
+            ->update(['avg_rating' => $avg]);
+    }
+
     /* =========================================================
      * FRONTEND (ตัวอย่างเดิม)
      * =======================================================*/
@@ -121,63 +139,89 @@ class CoursesController extends Controller
      * =======================================================*/
     public function index(Request $request)
     {
-        // ให้ Bootstrap theme กับ pagination
-        Paginator::useBootstrap();
+        try {
+            // ให้ Bootstrap theme กับ pagination
+            Paginator::useBootstrap();
 
-        // รองรับ sort จาก query string (ค่าเริ่มต้น id_asc)
-        $sort = (string) $request->query('sort', 'id_asc');
+            // รองรับ sort จาก query string (ค่าเริ่มต้น id_asc)
+            $sort = (string) $request->query('sort', 'id_asc');
 
-        // ถ้าต้องการค้นหา/ฟิลเตอร์ในอนาคตสามารถเพิ่มเงื่อนไขได้ที่นี่
-        $qb = CoursesModel::query();
+            // โหลดข้อมูลคอร์ส
+            $qb = CoursesModel::query();
 
-        // จัดเรียงตามคีย์ที่ปลอดภัย
-        $this->applySort($qb, $sort);
+            // จัดเรียงตามคีย์ที่ปลอดภัย
+            $this->applySort($qb, $sort);
 
-        // *** กำหนดให้แสดง 5 รายการต่อหน้าเสมอสำหรับหน้า List ***
-        $perPage = 5;
+            // แสดง 5 รายการต่อหน้า
+            $perPage = 5;
+            $courses = $qb->paginate($perPage)->withQueryString();
 
-        $courses = $qb->paginate($perPage)->withQueryString();
+            // เพิ่มฟิลด์ช่วยสำหรับ view
+            $courses->getCollection()->transform(function ($row) {
+                $row->created_for_view = optional($row->created_at)->format('Y-m-d H:i');
+                $row->updated_for_view = optional($row->updated_at)->format('Y-m-d H:i');
 
-        // เพิ่มฟิลด์ช่วยสำหรับ view: created_for_view / updated_for_view (ไม่บังคับใช้ใน blade ก็ได้)
-        // ทำให้แน่ใจว่ามีสตริง "สร้างเมื่อ" พร้อมใช้เสมอ
-        $courses->getCollection()->transform(function ($row) {
-            $row->created_for_view = optional($row->created_at)->format('Y-m-d H:i');
-            $row->updated_for_view = optional($row->updated_at)->format('Y-m-d H:i');
-            return $row;
-        });
+                // เพิ่มชื่อ category ถ้าไม่มี relation
+                if (!isset($row->category) && isset($row->category_id)) {
+                    try {
+                        $category = \App\Models\CategoryModel::find($row->category_id);
+                        $row->category_name = $category ? $category->name : "หมวด #{$row->category_id}";
+                    } catch (\Exception $e) {
+                        $row->category_name = "หมวด #{$row->category_id}";
+                    }
+                }
 
-        // หากผู้ใช้พิมพ์เลขหน้าที่เกิน ทำให้หน้าเปล่า → เด้งไปหน้าสุดท้าย
-        if ($courses->isEmpty() && $request->has('page') && (int) $request->get('page') > 1) {
-            return redirect()->fullUrlWithQuery(['page' => $courses->lastPage()]);
+                return $row;
+            });
+
+            // หากผู้ใช้พิมพ์เลขหน้าที่เกิน ทำให้หน้าเปล่า → เด้งไปหน้าสุดท้าย
+            if ($courses->isEmpty() && $request->has('page') && (int) $request->get('page') > 1) {
+                return redirect()->fullUrlWithQuery(['page' => $courses->lastPage()]);
+            }
+
+            return view('courses.list', compact('courses'));
+
+        } catch (\Exception $e) {
+            \Log::error('CoursesController@index ERROR: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                'request' => $request->all()
+            ]);
+
+            Alert::error('เกิดข้อผิดพลาด', 'ไม่สามารถโหลดรายการคอร์สได้ กรุณาลองใหม่อีกครั้ง');
+            return redirect()->route('frontend')->withErrors(['error' => 'ไม่สามารถโหลดหน้านี้ได้']);
         }
-
-        // ส่ง $courses ไปที่ view list.blade
-        // ภายใน $courses มีฟิลด์ที่โมดัล/ตารางต้องใช้ครบ เช่น:
-        // - $row->course_url (ลิงก์ไปหน้าคอร์ส)
-        // - $row->created_at (ใช้แสดง “สร้างเมื่อ” ใน list.blade)
-        // - $row->duration_text, $row->provider_instructor ฯลฯ
-        return view('courses.list', compact('courses'));
     }
 
     /* =========================================================
-     * FORM: CREATE
+     * FORM: CREATE (ส่ง dropdown หมวดหมู่ไปหน้าเพิ่มคอร์ส)
      * =======================================================*/
     public function adding()
     {
-        return view('courses.create');
+        try {
+            $categories = CategoryModel::orderBy('category_id', 'asc')->get(['category_id', 'name']);
+        } catch (\Exception $e) {
+            // ถ้าไม่สามารถโหลด categories ได้ ให้ใช้ array ว่าง
+            \Log::warning('Cannot load categories in adding(): ' . $e->getMessage());
+            $categories = collect([]);
+        }
+
+        return view('courses.create', compact('categories'));
     }
 
     /* =========================================================
-     * STORE (POST /courses)
+     * STORE (POST /courses) — รองรับ dropdown + validate exists
      * =======================================================*/
     public function create(Request $request)
     {
         $messages = [
             'title.required'              => 'กรุณากรอกชื่อคอร์ส',
             'title.max'                   => 'ชื่อคอร์สไม่เกิน :max ตัวอักษร',
-            'category_id.required'        => 'กรุณากรอกหมวดหมู่ (ID)',
+            'category_id.required'        => 'กรุณาเลือกหมวดหมู่',
             'category_id.integer'         => 'หมวดหมู่ต้องเป็นตัวเลข',
             'category_id.between'         => 'หมวดหมู่ต้องอยู่ระหว่าง :min ถึง :max',
+            'category_id.exists'          => 'หมวดหมู่ที่เลือกไม่มีอยู่ในระบบ',
             'provider.required'           => 'กรุณากรอกผู้ให้บริการ',
             'provider.max'                => 'ผู้ให้บริการไม่เกิน :max ตัวอักษร',
             'provider_instructor.max'     => 'ชื่อผู้สอนไม่เกิน :max ตัวอักษร',
@@ -203,7 +247,7 @@ class CoursesController extends Controller
 
         $rules = [
             'title'               => 'required|string|max:200',
-            'category_id'         => 'required|integer|between:0,999999',
+            'category_id'         => 'required|integer|between:1,999999|exists:tbl_categories,category_id',
             'provider'            => 'required|string|max:120',
             'provider_instructor' => 'nullable|string|max:120',
             'level'               => 'required|in:beginner,intermediate,advanced',
@@ -230,7 +274,7 @@ class CoursesController extends Controller
         });
 
         if ($validator->fails()) {
-            return redirect('courses/adding')->withErrors($validator)->withInput();
+            return redirect()->route('admin.courses.adding')->withErrors($validator)->withInput();
         }
 
         try {
@@ -264,7 +308,7 @@ class CoursesController extends Controller
             ]);
 
             Alert::success('สำเร็จ', 'เพิ่มคอร์สเรียบร้อยแล้ว');
-            return redirect('/courses');
+            return redirect()->route('admin.courses.index');
         } catch (\Throwable $e) {
             Alert::error('เกิดข้อผิดพลาด', $e->getMessage());
             return back()->withInput();
@@ -272,12 +316,20 @@ class CoursesController extends Controller
     }
 
     /* =========================================================
-     * EDIT FORM
+     * FORM: CREATE (ส่ง dropdown หมวดหมู่ไปหน้าแก้ไขคอร์ส)
      * =======================================================*/
     public function edit($id)
     {
         try {
             $course = CoursesModel::findOrFail($id);
+
+            // ส่ง dropdown categories ด้วย error handling
+            try {
+                $categories = CategoryModel::orderBy('category_id', 'asc')->get(['category_id', 'name']);
+            } catch (\Exception $e) {
+                \Log::warning('Cannot load categories in edit(): ' . $e->getMessage());
+                $categories = collect([]);
+            }
 
             // ส่งตัวแปรที่ view ใช้เดิม
             $id                  = $course->getKey();
@@ -298,6 +350,7 @@ class CoursesController extends Controller
 
             return view('courses.edit', compact(
                 'course',
+                'categories',
                 'id',
                 'course_id',
                 'title',
@@ -320,16 +373,17 @@ class CoursesController extends Controller
     }
 
     /* =========================================================
-     * UPDATE (PUT /courses/{id})
+     * UPDATE (PUT /courses/{id}) — รองรับ dropdown + validate exists
      * =======================================================*/
     public function update($id, Request $request)
     {
         $messages = [
             'title.required'              => 'กรุณากรอกชื่อคอร์ส',
             'title.max'                   => 'ชื่อคอร์สไม่เกิน :max ตัวอักษร',
-            'category_id.required'        => 'กรุณากรอกหมวดหมู่ (ID)',
+            'category_id.required'        => 'กรุณาเลือกหมวดหมู่',
             'category_id.integer'         => 'หมวดหมู่ต้องเป็นตัวเลข',
             'category_id.between'         => 'หมวดหมู่ต้องอยู่ระหว่าง :min ถึง :max',
+            'category_id.exists'          => 'หมวดหมู่ที่เลือกไม่มีอยู่ในระบบ',
             'provider.required'           => 'กรุณากรอกผู้ให้บริการ',
             'provider.max'                => 'ผู้ให้บริการไม่เกิน :max ตัวอักษร',
             'provider_instructor.max'     => 'ชื่อผู้สอนไม่เกิน :max ตัวอักษร',
@@ -354,7 +408,7 @@ class CoursesController extends Controller
 
         $rules = [
             'title'               => 'required|string|max:200',
-            'category_id'         => 'required|integer|between:0,999999',
+            'category_id'         => 'required|integer|between:1,999999|exists:tbl_categories,category_id',
             'provider'            => 'required|string|max:120',
             'provider_instructor' => 'nullable|string|max:120',
             'level'               => 'required|in:beginner,intermediate,advanced',
@@ -415,7 +469,7 @@ class CoursesController extends Controller
             ]);
 
             Alert::success('สำเร็จ', 'บันทึกการเปลี่ยนแปลงเรียบร้อยแล้ว');
-            return redirect('/courses');
+            return redirect()->route('admin.courses.index');
         } catch (\Throwable $e) {
             Alert::error('เกิดข้อผิดพลาด', $e->getMessage());
             return back()->withInput();
@@ -432,7 +486,7 @@ class CoursesController extends Controller
 
             if (!$course) {
                 Alert::error('ไม่พบข้อมูลคอร์ส');
-                return redirect('courses');
+                return redirect()->route('admin.courses.index');
             }
 
             try {
@@ -444,10 +498,176 @@ class CoursesController extends Controller
 
             $course->delete();
             Alert::success('สำเร็จ', 'ลบคอร์สเรียบร้อยแล้ว');
-            return redirect('courses');
+            return redirect()->route('admin.courses.index');
         } catch (\Throwable $e) {
             Alert::error('เกิดข้อผิดพลาด', $e->getMessage());
-            return redirect('courses');
+            return redirect()->route('admin.courses.index');
         }
+    }
+
+    /* =========================================================
+    * SHOW (ดูรายละเอียดคอร์ส)
+    * =======================================================*/
+    public function show($id)
+    {
+        $course = CoursesModel::findOrFail($id);
+
+        // ชื่อหมวดหมู่ (ถ้ามีตาราง tbl_categories)
+        $categoryName = DB::table('tbl_categories')
+            ->where('category_id', $course->category_id)
+            ->value('name');
+
+        // รูป
+        $imageUrl = '';
+        if (!empty($course->cover_img) && \Storage::disk('public')->exists($course->cover_img)) {
+            $imageUrl = \Storage::url($course->cover_img);
+        } else {
+            $imageUrl = file_exists(public_path('images/placeholder.png'))
+                ? asset('images/placeholder.png')
+                : 'https://via.placeholder.com/1200x630?text=No+Image';
+        }
+
+        // สถานะ favorite ของผู้ใช้ปัจจุบัน
+        $isFavorited = false;
+        if (Auth::check()) {
+            $isFavorited = DB::table('tbl_favorites')
+                ->where('user_id', Auth::id())
+                ->where('course_id', $course->course_id)
+                ->exists();
+        }
+
+        // ดึงรีวิว (paginate)
+        $reviews = DB::table('tbl_reviews')
+            ->select('review_id', 'course_id', 'user_id', 'rating', 'comment', 'created_at')
+            ->where('course_id', $course->course_id)
+            ->orderByDesc('review_id')
+            ->paginate(5);
+
+        return view('courses.courses_details', compact(
+            'course',
+            'categoryName',
+            'imageUrl',
+            'isFavorited',
+            'reviews'
+        ));
+    }
+
+    /** TOGGLE FAVORITE: เพิ่ม/ลบ รายการโปรด */
+    public function toggleFavorite(Request $request, $courseId)
+    {
+        $userId = \Illuminate\Support\Facades\Auth::guard('member')->id();
+        abort_if(!$userId, 401, 'Unauthorized');
+
+        // ชี้คอลัมน์ให้ตรงฐานข้อมูล
+        $courseExists = DB::table('tbl_courses')->where('course_id', $courseId)->exists();
+        abort_if(!$courseExists, 404);
+
+        $exists = DB::table('tbl_favorites')->where('user_id', $userId)->where('course_id', $courseId)->exists();
+
+        if ($exists) {
+            DB::table('tbl_favorites')->where('user_id', $userId)->where('course_id', $courseId)->delete();
+        } else {
+            DB::table('tbl_favorites')->insert(['user_id' => $userId, 'course_id' => $courseId, 'created_at' => now()]);
+        }
+
+        // ถ้าขอ JSON (จาก fetch) → ส่ง 204 กลับไป เพื่อไม่ต้อง redirect
+        if ($request->expectsJson()) {
+            return response()->noContent(); // 204
+        }
+        return back();
+    }
+
+    /** STORE REVIEW: บันทึกรีวิว + อัปเดตค่าเฉลี่ยลง courses */
+    public function storeReview(Request $request, $courseId)
+    {
+        $userId = \Illuminate\Support\Facades\Auth::guard('member')->id();
+        abort_if(!$userId, 401, 'Unauthorized');
+
+        $data = $request->validate([
+            'rating'  => ['required', 'numeric', 'between:1,5'],
+            'comment' => ['required', 'string', 'max:2000'],
+        ], [
+            'rating.required'  => 'กรุณาให้คะแนน',
+            'rating.between'   => 'คะแนนต้องอยู่ระหว่าง 1 ถึง 5',
+            'comment.required' => 'กรุณาเขียนรีวิว',
+        ]);
+
+        // มีรีวิวแล้ว → ไม่อนุญาตให้รีวิว/แก้ซ้ำ
+        $exists = DB::table('tbl_reviews')
+            ->where('user_id', $userId)
+            ->where('course_id', $courseId)
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors([
+                // ผูกที่ 'comment' เพื่อให้ข้อความไปขึ้นใต้กล่องข้อความตาม Blade ปัจจุบัน
+                'comment' => 'คุณได้รีวิวคอร์สนี้แล้ว ไม่สามารถรีวิวซ้ำหรือแก้ไขได้',
+            ])->withInput();
+        }
+
+        try {
+            DB::table('tbl_reviews')->insert([
+                'user_id'    => $userId,
+                'course_id'  => $courseId,
+                'rating'     => (int) round($data['rating']),
+                'comment'    => trim($data['comment']),
+                'created_at' => now(),   // ตารางคุณไม่มี updated_at
+            ]);
+        } catch (\Illuminate\Database\QueryException $e) {
+            // กัน race condition: ถ้าชน unique key
+            if ($e->getCode() === '23000') {
+                return back()->withErrors([
+                    'comment' => 'คุณได้รีวิวคอร์สนี้แล้ว ไม่สามารถรีวิวซ้ำหรือแก้ไขได้',
+                ])->withInput();
+            }
+            throw $e;
+        }
+
+        // ===== เพิ่มใหม่: อัปเดตค่าเฉลี่ยของคอร์สทันทีหลังบันทึกรีวิว =====
+        $this->recalcAvgRating((int) $courseId);
+
+        return back()->with('status', 'review_saved');
+    }
+
+    /* =========================================================
+     * FAVORITES PAGE (ใหม่) — แสดงรายการโปรดของผู้ใช้
+     * =======================================================*/
+    public function favorites(Request $request)
+    {
+        $userId = Auth::id();
+        if (!$userId) {
+            $userId = Auth::guard('member')->id();
+        }
+        if (!$userId) {
+            return redirect()->route('login');
+        }
+
+        $q    = (string) $request->query('q', '');
+        $sort = (string) $request->query('sort', 'new'); // new|rating|title
+
+        $query = DB::table('tbl_favorites')
+            ->join('tbl_courses', 'tbl_courses.course_id', '=', 'tbl_favorites.course_id')
+            ->where('tbl_favorites.user_id', $userId)
+            ->select(
+                'tbl_courses.*',
+                'tbl_favorites.created_at as favored_at',
+                'tbl_courses.course_id as id' // ★ เพิ่ม alias ให้ Blade ใช้ $c->id ได้
+            );
+
+        if ($q !== '') {
+            $query->where('tbl_courses.title', 'like', "%{$q}%");
+        }
+
+        if ($sort === 'rating') {
+            $query->orderByDesc('tbl_courses.avg_rating');
+        } elseif ($sort === 'title') {
+            $query->orderBy('tbl_courses.title');
+        } else {
+            $query->orderByDesc('favored_at');
+        }
+
+        $courses = $query->paginate(12)->withQueryString();
+
+        return view('courses.favorites', compact('courses', 'q', 'sort'));
     }
 }
