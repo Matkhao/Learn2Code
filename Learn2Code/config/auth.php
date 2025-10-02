@@ -8,7 +8,6 @@ return [
     |--------------------------------------------------------------------------
     */
     'defaults' => [
-        // ตั้งค่าให้ guard หลักเป็น member (แก้ได้จาก .env ผ่าน AUTH_GUARD)
         'guard' => env('AUTH_GUARD', 'member'),
         'passwords' => env('AUTH_PASSWORD_BROKER', 'members'),
     ],
@@ -32,7 +31,6 @@ return [
 
         'admin' => [
             'driver'   => 'session',
-            // เดิมเป็น 'admins' → ปรับให้ชี้ไปที่ 'members' เพื่อใช้บัญชีเดียวกันกับ Member
             'provider' => 'members',
         ],
 
@@ -83,7 +81,6 @@ return [
             'throttle' => 60,
         ],
 
-        // reset password สำหรับสมาชิก (ใช้ broker "members")
         'members' => [
             'provider' => 'members',
             'table'    => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),

@@ -1,13 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TestController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\StudentController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\CoursesController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\MemberAuthController;
+use App\Http\Controllers\ReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,13 +15,8 @@ use App\Http\Controllers\MemberAuthController;
 */
 
 Route::get('/', [CoursesController::class, 'frontend'])->name('frontend'); // หน้าแรกหลัก
-Route::get('/home', [HomeController::class, 'index'])->name('home.index');  // สำรอง/เดโม
 
-// หน้า product (เดโม)
-Route::get('/detail/{id}', [HomeController::class, 'detail'])->name('product.detail')->whereNumber('id');
-Route::get('/search', [HomeController::class, 'searchProduct'])->name('product.search');
-
-// Courses (สาธารณะ)
+// Courses (ผู้ใช้ทั่วไป)
 Route::get('/courses/detail/{id}', [CoursesController::class, 'show'])->name('courses.detail')->whereNumber('id');
 
 // บทความ
@@ -44,12 +38,11 @@ Route::middleware('guest:member')->group(function () {
 Route::post('/member/logout', [MemberAuthController::class, 'logout'])
     ->middleware('auth:member')->name('member.logout');
 
-// ให้ middleware auth redirect ไปเส้นนี้
 Route::get('/login', fn() => redirect()->route('member.login'))->name('login');
 
 /*
 |--------------------------------------------------------------------------
-| Member Area (ต้องล็อกอินด้วย guard: member)
+| Member Area
 |--------------------------------------------------------------------------
 | รายการโปรด/รีวิว
 */
@@ -65,13 +58,13 @@ Route::middleware('auth:member')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Admin Area (ต้องล็อกอินด้วย guard: admin)
+| Admin Area (ต้องล็อกอิน)
 |--------------------------------------------------------------------------
-| หลังบ้าน + จัดการคอร์ส
+| หลังบ้าน + จัดการคอร์ส + จัดการผู้ดูแลระบบ
 */
-// 🚨 TEMP: ปิด middleware สำหรับทดสอบ (เปิดคืนภายหลัง)
 Route::prefix('admin')->name('admin.')->group(function () {
-    // ===== คอร์ส: วางไว้ก่อน! =====
+
+    // ===== จัดการคอร์ส =====
     Route::get('/courses', [CoursesController::class, 'index'])->name('courses.index');
     Route::get('/courses/adding', [CoursesController::class, 'adding'])->name('courses.adding');
     Route::post('/courses', [CoursesController::class, 'create'])->name('courses.store');
@@ -79,20 +72,19 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::put('/courses/{id}', [CoursesController::class, 'update'])->name('courses.update')->whereNumber('id');
     Route::delete('/courses/{id}', [CoursesController::class, 'remove'])->name('courses.destroy')->whereNumber('id');
 
-    // ===== อื่น ๆ ค่อยตามมา =====
-    Route::get('/', [AdminController::class, 'index'])->name('index');
-    Route::get('/adding', [AdminController::class, 'adding'])->name('adding');
-    Route::post('/', [AdminController::class, 'create'])->name('create');
+    Route::resource('users', AdminUserController::class)
+        ->parameters(['users' => 'id'])
+        ->names('users');
 
-    // ไดนามิกทั้งหมดบังคับเป็นตัวเลข
-    Route::get('/{id}', [AdminController::class, 'edit'])->name('edit')->whereNumber('id');
-    Route::put('/{id}', [AdminController::class, 'update'])->name('update')->whereNumber('id');
-    Route::delete('/remove/{id}', [AdminController::class, 'remove'])->name('remove')->whereNumber('id');
-    Route::get('/reset/{id}', [AdminController::class, 'reset'])->name('reset.get')->whereNumber('id');
-    Route::put('/reset/{id}', [AdminController::class, 'resetPassword'])->name('reset.put')->whereNumber('id');
+    Route::get('/', fn() => redirect()->route('admin.dashboard.index'))->name('home');
 
-    // ===== เพิ่มเติม (ไม่ทับของเดิม) : ชี้ dashboard ไปที่ /admin/courses =====
-    Route::get('/dashboard', fn() => redirect()->route('admin.courses.index'))->name('dashboard');
+    // ===== Dashboard =====
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])
+        ->name('dashboard.index');
+
+    // อัปเดตข้อมูลแบบ realtime
+    Route::get('/dashboard/refresh', [AdminDashboardController::class, 'refresh'])
+        ->name('dashboard.refresh');
 });
 
 /*
@@ -118,6 +110,3 @@ Route::get('/__route-dump', function (\Illuminate\Http\Request $req) {
         ],
     ];
 });
-
-
-

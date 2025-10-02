@@ -1,4 +1,3 @@
-{{-- resources/views/courses/courses_details.blade.php --}}
 <!doctype html>
 <html lang="th">
 
@@ -13,7 +12,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
-
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/Assets/Learn2Code_Transparent.png') }}">
     @php
         use Illuminate\Support\Facades\Route;
         use Illuminate\Support\Facades\Storage;
@@ -32,11 +31,10 @@
         $rating = round((float) ($course->avg_rating ?? 0), 1);
         $isFree = ($course->price_type ?? 'free') === 'free';
 
-        // ====== ให้เลือก user จาก guard: member -> web -> admin ======
         $authUser = auth('member')->user() ?: auth()->user() ?: auth('admin')->user();
         $AUTH_CHECK = !is_null($authUser);
 
-        // สถานะ favorite (ถ้าไม่มี method ใน model ให้เช็คตรงตาราง)
+        // สถานะ favorite
         $isFavorited = isset($isFavorited)
             ? (bool) $isFavorited
             : ($AUTH_CHECK
@@ -50,11 +48,9 @@
                         ->exists())
                 : false);
 
-        // ค่าฟอร์มรีวิว (ถ้ามีของเดิม)
         $myRating = (int) old('rating', isset($myReview) ? optional($myReview)->rating ?? 3 : 3);
         $myComment = old('comment', isset($myReview) ? optional($myReview)->comment ?? '' : '');
 
-        // URL เข้าสู่ระบบ: member.login ก่อน, แล้วค่อย login เริ่มต้น, สุดท้าย /login
         $loginUrl = Route::has('member.login')
             ? route('member.login')
             : (Route::has('login')
@@ -648,7 +644,7 @@
                         favBtn.querySelector('.txt').textContent =
                             favBtn.classList.contains('active') ? 'อยู่ในรายการโปรด' : 'เพิ่มลงรายการโปรด';
                     } else {
-                        favForm.submit(); // fallback
+                        favForm.submit();
                     }
                 } catch (_) {
                     favForm.submit();

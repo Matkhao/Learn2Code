@@ -30,7 +30,6 @@ class CoursesModel extends Model
         'created_at',
     ];
 
-    // แปลงชนิดข้อมูลอัตโนมัติ
     protected $casts = [
         'price'      => 'decimal:2',
         'avg_rating' => 'decimal:2',
@@ -91,6 +90,5 @@ class CoursesModel extends Model
     public function getRouteKeyName()
     {
         return 'course_id';
-    } // เพื่อใช้ {course} ผูกด้วย course_id
-
+    }
 }

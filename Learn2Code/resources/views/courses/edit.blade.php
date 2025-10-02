@@ -8,492 +8,8 @@
         href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Thai:wght@300;400;600;700;800&display=swap"
         rel="stylesheet">
 
-    <style>
-        :root {
-            --bg: #0a0c10;
-            --panel: #12141a;
-            --panel2: #0e1219;
-            --border: #1c1f27;
-            --text: #e9f1fa;
-            --muted: #9aa5b4;
-            --blue: #2196f3;
-            --blue-dark: #1976d2;
-            --danger: #e53935;
-            --success: #22c55e;
-            --warning: #ffca28;
-            --radius: 14px;
-            --radius-sm: 10px;
-            --shadow: 0 10px 30px rgba(0, 0, 0, .25);
-            --actions-h: 64px;
-            /* ความสูงโดยประมาณของแถบปุ่มด้านล่าง */
-        }
-
-        html,
-        body {
-            font-family: "Noto Sans Thai", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            -webkit-text-size-adjust: 100%;
-        }
-
-        /* ---------- Page hero ---------- */
-        .page-hero {
-            background: radial-gradient(1200px 400px at 10% -20%, rgba(33, 150, 243, .25), transparent),
-                radial-gradient(900px 300px at 110% 0%, rgba(25, 118, 210, .23), transparent);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 18px 20px;
-            margin-bottom: 16px;
-        }
-
-        .page-hero h1 {
-            font-family: "Bebas Neue", sans-serif;
-            letter-spacing: .5px;
-            font-size: clamp(28px, 4vw, 40px);
-            line-height: 1;
-            margin: 0;
-        }
-
-        .page-hero p {
-            color: var(--muted);
-            margin: 6px 0 0;
-        }
-
-        /* ---------- Card ---------- */
-        .card-ui {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .card-head {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 14px 18px;
-            border-bottom: 1px solid var(--border);
-            background: linear-gradient(180deg, rgba(255, 255, 255, .02), transparent);
-        }
-
-        .card-head .title {
-            font-weight: 800;
-        }
-
-        .card-body {
-            padding: clamp(14px, 3vw, 18px);
-        }
-
-        /* ---------- Labels & help ---------- */
-        .label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700;
-            margin-bottom: 6px;
-            flex-wrap: wrap;
-        }
-
-        .label .req {
-            color: var(--warning);
-            font-weight: 800;
-        }
-
-        .help {
-            color: var(--muted);
-            font-size: .9rem;
-        }
-
-        /* ---------- Inputs with icon ---------- */
-        .input-icon {
-            display: flex;
-            align-items: stretch;
-            width: 100%;
-        }
-
-        .input-icon .icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 12px;
-            border: 1px solid var(--border);
-            border-right: none;
-            background: #10131a;
-            color: #9ecbff;
-            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-            min-width: 44px;
-        }
-
-        .input-icon .form-control,
-        .input-icon .form-select {
-            border: 1px solid var(--border);
-            background: #0e1118;
-            color: var(--text);
-            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-            min-height: 44px;
-        }
-
-        .form-control,
-        .form-select {
-            border: 1px solid var(--border);
-            background: #0e1118;
-            color: var(--text);
-            min-height: 44px;
-        }
-
-        .form-control::placeholder {
-            color: #6b7686;
-        }
-
-        /* ---------- Chips ---------- */
-        .chipset {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .chip {
-            border: 1px solid var(--border);
-            background: #0f1420;
-            color: var(--text);
-            padding: 12px 16px;
-            border-radius: 999px;
-            cursor: pointer;
-            user-select: none;
-            transition: transform .15s ease, box-shadow .15s ease, background .2s ease;
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .chip:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, .25);
-        }
-
-        .chip[data-active="true"],
-        .chip[aria-checked="true"] {
-            background: var(--blue);
-            border-color: var(--blue);
-            color: #fff;
-        }
-
-        .chip:focus-visible {
-            outline: 2px solid var(--blue);
-            outline-offset: 2px;
-        }
-
-        /* เต็มความกว้างและ responsive */
-        .chipset--fill {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-            width: 100%;
-        }
-
-        @media (max-width:480px) {
-            .chipset--fill {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .is-disabled {
-            opacity: .55;
-        }
-
-        .is-disabled input {
-            pointer-events: none;
-        }
-
-        /* ---------- Image helpers ---------- */
-        .thumb-current {
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-            background: #0b0f16;
-        }
-
-        .thumb-current img {
-            display: block;
-            width: 100%;
-            height: auto;
-            max-height: 240px;
-            object-fit: cover;
-        }
-
-        .dropzone {
-            border: 1px dashed #2a3342;
-            border-radius: var(--radius);
-            background: #0b1018;
-            padding: 14px;
-            text-align: center;
-            transition: .2s;
-        }
-
-        .dropzone:hover {
-            border-color: #447bd3;
-            background: #0d1422;
-        }
-
-        .dz-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-
-        .preview {
-            margin-top: 12px;
-            display: none;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-            background: #0b0f16;
-        }
-
-        .preview img {
-            width: 100%;
-            height: auto;
-            max-height: 260px;
-            object-fit: cover;
-            display: block;
-        }
-
-        .divider {
-            height: 1px;
-            background: var(--border);
-            margin: 18px 0;
-        }
-
-        /* ---------- Buttons ---------- */
-        .btn {
-            border-radius: 12px;
-            font-weight: 700;
-            min-height: 44px;
-        }
-
-        .btn-primary {
-            background: var(--blue);
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background: var(--blue-dark);
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            border: none;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text);
-        }
-
-        .btn-outline:hover {
-            background: #0f1420;
-        }
-
-        .counter {
-            font-size: .85rem;
-            color: var(--muted);
-        }
-
-        /* ---------- Sticky summary (above actions) ---------- */
-        .sticky-summary {
-            position: sticky;
-            bottom: calc(var(--actions-h) + 12px);
-            z-index: 6;
-            margin-top: 24px;
-            background: linear-gradient(180deg, rgba(255, 255, 255, .02), transparent), var(--panel2);
-            border-top: 1px solid var(--border);
-            padding: 16px;
-            border-radius: 0 0 var(--radius) var(--radius);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .02);
-        }
-
-        .summary-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .summary-title {
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .badge-count {
-            background: #0f1420;
-            border: 1px solid var(--border);
-            color: #cfe7ff;
-            padding: 4px 10px;
-            border-radius: 999px;
-            font-size: .85rem;
-        }
-
-        .change-pills {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 8px;
-        }
-
-        .change-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 10px;
-            background: #0f1420;
-            border: 1px solid var(--border);
-            border-radius: 999px;
-            font-size: .9rem;
-            color: #cfe7ff;
-        }
-
-        /* ตารางสรุป: ตัดคำ/ขึ้นบรรทัดใหม่ */
-        .change-table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-            font-size: .92rem;
-            margin-top: 10px;
-        }
-
-        .change-table th,
-        .change-table td {
-            border-top: 1px solid var(--border);
-            padding: 8px 10px;
-            vertical-align: top;
-            white-space: pre-wrap;
-            word-break: break-word;
-            overflow-wrap: anywhere;
-        }
-
-        .change-table th {
-            color: var(--muted);
-            font-weight: 700;
-            width: 26%;
-        }
-
-        @media (max-width:576px) {
-            .change-table th {
-                width: 32%;
-            }
-        }
-
-        /* ---------- Sticky actions (left aligned, transparent) ---------- */
-        .sticky-actions {
-            position: sticky;
-            bottom: 0;
-            z-index: 7;
-            background: transparent;
-            border-top: none;
-            padding: 10px 0 0;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 10px;
-            min-height: var(--actions-h);
-            flex-wrap: wrap;
-        }
-
-        /* ---------- Range & Rating ---------- */
-        .form-range {
-            accent-color: var(--blue);
-            width: 100%;
-        }
-
-        .form-range::-webkit-slider-thumb {
-            background: var(--blue);
-        }
-
-        .form-range::-moz-range-thumb {
-            background: var(--blue);
-        }
-
-        .rating-widget .bi-star-fill,
-        .rating-widget .bi-star-half {
-            color: #ffd54f;
-        }
-
-        .rating-widget .bi-star {
-            color: #5f6b7a;
-        }
-
-        .rating-widget .rating-stars {
-            display: flex;
-            align-items: center;
-            gap: .25rem;
-            flex-wrap: nowrap;
-        }
-
-        .rating-range {
-            accent-color: #2196f3;
-            width: 100%;
-        }
-
-        .rating-range::-webkit-slider-thumb {
-            background: #2196f3;
-        }
-
-        .rating-range::-moz-range-thumb {
-            background: #2196f3;
-        }
-
-        /* ---------- Grid gap tweaks for small screens ---------- */
-        @media (max-width:768px) {
-            .row.g-3 {
-                --bs-gutter-x: 0.8rem;
-                --bs-gutter-y: 0.8rem;
-            }
-        }
-
-        /* ลด motion สำหรับผู้ใช้ที่ไม่ต้องการ animation */
-        @media (prefers-reduced-motion: reduce) {
-            .chip {
-                transition: none;
-            }
-        }
-
-        .input-icon.has-suffix {
-            position: relative;
-        }
-
-        .input-icon.has-suffix .form-control {
-            padding-right: 44px;
-        }
-
-        .suffix-btn {
-            position: absolute;
-            right: 6px;
-            top: 50%;
-            transform: translateY(-50%);
-            height: 34px;
-            min-width: 34px;
-            border: 1px solid var(--border);
-            background: #0f1420;
-            color: var(--text);
-            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .suffix-btn:hover {
-            background: #151b2a;
-            color: #9ecbff;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/courses/courses.edit.css') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/Assets/Learn2Code_Transparent.png') }}">
 @endsection
 
 @section('content')
@@ -514,7 +30,6 @@
             </div>
 
             <div class="card-body">
-                <!-- Title -->
                 <div class="mb-3">
                     <div class="label"><i class="bi bi-type"></i> ชื่อคอร์ส <span class="req">*</span></div>
                     <div class="input-icon">
@@ -532,7 +47,6 @@
                     @enderror
                 </div>
 
-                {{-- Category (view-only + edit via modal) --}}
                 @php
                     $catId = old('category_id', $category_id ?? null);
                     $catName = isset($categories)
@@ -546,11 +60,9 @@
                     <div class="input-icon has-suffix">
                         <span class="icon"><i class="bi bi-collection"></i></span>
 
-                        {{-- ช่องที่เห็น --}}
                         <input type="text" class="form-control" id="category_display" value="{{ $catDisplay }}"
                             placeholder="เช่น 1 - ฐานข้อมูล" readonly>
 
-                        {{-- ค่าที่ submit จริง --}}
                         <input type="hidden" name="category_id" id="category_id_input" value="{{ $catId }}">
 
                         <button class="suffix-btn" type="button" id="btnEditCategory" aria-label="แก้ไขหมวดหมู่">
@@ -562,7 +74,6 @@
                     @enderror
                 </div>
 
-                <!-- Modal: เลือกหมวดหมู่ -->
                 <div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content"
@@ -596,8 +107,9 @@
                     <div class="label"><i class="bi bi-building"></i> ผู้ให้บริการคอร์ส</div>
                     <div class="input-icon">
                         <span class="icon"><i class="bi bi-bank2"></i></span>
-                        <input type="text" class="form-control" name="provider" value="{{ old('provider', $provider) }}"
-                            placeholder="เช่น DevSchool, Coursera, Udemy" data-field="provider">
+                        <input type="text" class="form-control" name="provider"
+                            value="{{ old('provider', $provider) }}" placeholder="เช่น DevSchool, Coursera, Udemy"
+                            data-field="provider">
                     </div>
                     @error('provider')
                         <div class="text-danger mt-1"><i class="bi bi-exclamation-octagon"></i> {{ $message }}</div>
@@ -687,12 +199,10 @@
                     <div class="label"><i class="bi bi-currency-exchange"></i> ราคา</div>
                     <div class="input-icon">
                         <span class="icon"><i class="bi bi-currency-baht"></i></span>
-                        <!-- เมื่อโหลดหน้า ครั้งแรก: ถ้าเป็น paid ใส่ name=price, ถ้า free ไม่ใส่ name -->
                         <input type="number" step="0.01" class="form-control" id="price"
                             {{ ($ptype ?? 'free') == 'paid' ? 'name=price' : '' }} value="{{ old('price', $price) }}"
                             placeholder="เช่น 999.00" data-field="price">
                     </div>
-                    <!-- hidden สำหรับส่งค่า 0 เมื่อเป็น Free เพื่อกัน validate numeric ล้มเหลว -->
                     <input type="hidden" id="price_hidden" name="price"
                         value="{{ ($ptype ?? 'free') == 'paid' ? old('price', $price) : 0 }}"
                         {{ ($ptype ?? 'free') == 'paid' ? 'disabled' : '' }}>
@@ -721,7 +231,7 @@
                     <textarea name="description" class="form-control" rows="5" maxlength="600"
                         placeholder="สรุปสิ่งที่จะได้เรียน หัวข้อหลัก และคุณสมบัติที่ผู้เรียนควรมี" data-field="description">{{ old('description', $description) }}</textarea>
                     <div class="d-flex justify-content-between">
-                        <small class="help">เคล็ดลับ: ใช้หัวข้อย่อย • เหมาะสำหรับผู้เริ่มต้น • มีโปรเจกต์จริง</small>
+                        <small class="help">เคล็ดลับ : ใช้หัวข้อย่อย • เหมาะสำหรับผู้เริ่มต้น • มีโปรเจกต์จริง</small>
                         <small class="counter" data-for="description">0/600</small>
                     </div>
                     @error('description')
@@ -798,7 +308,7 @@
                     </div>
                 </div>
 
-                <!-- Summary (sticky above actions) -->
+                <!-- Summary -->
                 <div class="sticky-summary">
                     <div class="summary-head">
                         <div class="summary-title"><i class="bi bi-clipboard2-check"></i> สรุปสิ่งที่แก้ไข</div>
@@ -835,7 +345,6 @@
                 new bootstrap.Modal(modalEl) : null;
 
             openBtn?.addEventListener('click', () => {
-                // sync ค่าใน select ให้ตรงกับค่าปัจจุบัน
                 if (input && select) {
                     const cur = (input.value || '').toString();
                     if (cur !== '') select.value = cur;
@@ -844,7 +353,7 @@
             });
 
             applyBtn?.addEventListener('click', () => {
-                if (input && select) input.value = select.value; // เขียนค่าใหม่กลับไปที่ input (ส่งฟอร์ม)
+                if (input && select) input.value = select.value;
                 modal?.hide();
             });
         });
@@ -883,7 +392,6 @@
                 return el;
             }
 
-            // escape text for table
             const esc = (s) => String(s ?? '').replace(/[&<>"']/g, m => ({
                 '&': '&amp;',
                 '<': '&lt;',
@@ -955,7 +463,6 @@
             });
             form.addEventListener('submit', () => dirty = false);
 
-            /* ---------- counters ---------- */
             [{
                     input: form.querySelector('[name="title"]'),
                     max: 100,
@@ -973,7 +480,7 @@
                 ['input', 'keyup'].forEach(evt => o.input.addEventListener(evt, render));
             });
 
-            /* ---------- price type (chips) ---------- */
+            /* ---------- price type ---------- */
             const chipsWrap = form.querySelector('#priceTypeChips');
             const hiddenType = form.querySelector('#price_type');
             const priceInput = form.querySelector('#price');
@@ -984,13 +491,11 @@
                 const paid = (hiddenType.value || 'free') === 'paid';
                 priceWrap.classList.toggle('is-disabled', !paid);
 
-                // โหมด Paid: เปิดช่องราคา ส่งค่าจากช่องนี้, ปิด hidden
                 if (paid) {
                     priceInput.disabled = false;
                     priceInput.setAttribute('name', 'price');
                     if (hiddenPrice) hiddenPrice.disabled = true;
                 } else {
-                    // โหมด Free: ปิดช่องราคาและถอด name ออก, ส่งค่า 0 ผ่าน hidden ให้ numeric ผ่าน
                     priceInput.value = '';
                     priceInput.removeAttribute('name');
                     priceInput.disabled = true;

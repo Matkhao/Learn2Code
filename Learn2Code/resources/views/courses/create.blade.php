@@ -8,285 +8,8 @@
         href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Thai:wght@300;400;600;700;800&display=swap"
         rel="stylesheet">
 
-    <style>
-        :root {
-            --bg: #0a0c10;
-            --panel: #12141a;
-            --panel2: #0e1219;
-            --border: #1c1f27;
-            --text: #e9f1fa;
-            --muted: #9aa5b4;
-            --blue: #2196f3;
-            --blue-dark: #1976d2;
-            --danger: #e53935;
-            --success: #22c55e;
-            --warning: #ffca28;
-            --radius: 14px;
-            --radius-sm: 10px;
-            --shadow: 0 10px 30px rgba(0, 0, 0, .25);
-        }
-
-        html,
-        body {
-            font-family: "Noto Sans Thai", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-        }
-
-        /* Header */
-        .page-hero {
-            background: radial-gradient(1200px 400px at 10% -20%, rgba(33, 150, 243, .25), transparent),
-                radial-gradient(900px 300px at 110% 0%, rgba(25, 118, 210, .23), transparent);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 18px 20px;
-            margin-bottom: 16px;
-        }
-
-        .page-hero h1 {
-            font-family: "Bebas Neue", sans-serif;
-            letter-spacing: .5px;
-            font-size: 40px;
-            line-height: 1;
-            margin: 0;
-        }
-
-        .page-hero p {
-            color: var(--muted);
-            margin: 6px 0 0;
-        }
-
-        /* Card */
-        .card-ui {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .card-head {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 14px 18px;
-            border-bottom: 1px solid var(--border);
-            background: linear-gradient(180deg, rgba(255, 255, 255, .02), transparent);
-        }
-
-        .card-head .title {
-            font-weight: 800;
-        }
-
-        .card-body {
-            padding: 18px;
-        }
-
-        /* Label & help */
-        .label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .label .req {
-            color: var(--warning);
-            font-weight: 800;
-        }
-
-        .help {
-            color: var(--muted);
-            font-size: .9rem;
-        }
-
-        /* Input with icon */
-        .input-icon {
-            display: flex;
-            align-items: stretch;
-        }
-
-        .input-icon .icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 12px;
-            border: 1px solid var(--border);
-            border-right: none;
-            background: #10131a;
-            color: #9ecbff;
-            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-        }
-
-        .input-icon .form-control,
-        .input-icon .form-select {
-            border: 1px solid var(--border);
-            background: #0e1118;
-            color: var(--text);
-            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-        }
-
-        .form-control,
-        .form-select {
-            border: 1px solid var(--border);
-            background: #0e1118;
-            color: var(--text);
-        }
-
-        .form-control::placeholder {
-            color: #6b7686;
-        }
-
-        /* Chips (Free / Paid) – เต็มความกว้าง & responsive */
-        .chipset--fill {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-        }
-
-        @media (max-width:480px) {
-            .chipset--fill {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .chip {
-            border: 1px solid var(--border);
-            background: #0f1420;
-            color: var(--text);
-            padding: 12px 16px;
-            border-radius: 999px;
-            cursor: pointer;
-            user-select: none;
-            transition: .2s;
-            text-align: center;
-            width: 100%;
-        }
-
-        .chip[data-active="true"] {
-            background: var(--blue);
-            border-color: var(--blue);
-            color: #fff;
-        }
-
-        .chip:focus {
-            outline: 2px solid var(--blue);
-            outline-offset: 2px;
-            box-shadow: 0 0 0 4px rgba(33, 150, 243, .15);
-        }
-
-        /* Disabled price state */
-        .is-disabled {
-            opacity: .55;
-        }
-
-        .is-disabled input {
-            pointer-events: none;
-        }
-
-        /* Dropzone */
-        .dropzone {
-            border: 1px dashed #2a3342;
-            border-radius: var(--radius);
-            background: #0b1018;
-            padding: 14px;
-            text-align: center;
-            transition: .2s;
-        }
-
-        .dropzone:hover {
-            border-color: #447bd3;
-            background: #0d1422;
-        }
-
-        .dz-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 10px;
-        }
-
-        .preview {
-            margin-top: 12px;
-            display: none;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-            background: #0b0f16;
-        }
-
-        .preview img {
-            width: 100%;
-            height: auto;
-            max-height: 260px;
-            object-fit: cover;
-            display: block;
-        }
-
-        /* Divider */
-        .divider {
-            height: 1px;
-            background: var(--border);
-            margin: 18px 0;
-        }
-
-        /* Buttons */
-        .btn {
-            border-radius: 12px;
-            font-weight: 700;
-        }
-
-        .btn-primary {
-            background: var(--blue);
-            border: none;
-        }
-
-        .btn-primary:hover {
-            background: var(--blue-dark);
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            border: none;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text);
-        }
-
-        .btn-outline:hover {
-            background: #0f1420;
-        }
-
-        /* Counters */
-        .counter {
-            font-size: .85rem;
-            color: var(--muted);
-        }
-
-        /* Rating */
-        .rating-widget .bi-star-fill,
-        .rating-widget .bi-star-half {
-            color: #ffd54f;
-        }
-
-        .rating-widget .bi-star {
-            color: #5f6b7a;
-        }
-
-        .rating-widget .rating-stars {
-            display: flex;
-            align-items: center;
-            gap: .25rem;
-        }
-
-        .rating-range {
-            accent-color: #2196f3;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/courses/courses.create.css') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/Assets/Learn2Code_Transparent.png') }}">
 @endsection
 
 @section('content')
@@ -377,7 +100,7 @@
                         @enderror
                     </div>
 
-                    <!-- Instructor (nullable) -->
+                    <!-- Instructor -->
                     <div class="col-md-6">
                         <div class="label"><i class="bi bi-person-badge"></i> ผู้สอน (ไม่บังคับ)</div>
                         <div class="input-icon">
@@ -455,7 +178,6 @@
                     <div class="label"><i class="bi bi-currency-exchange"></i> ราคา (บาท)</div>
                     <div class="input-icon">
                         <span class="icon"><i class="bi bi-currency-baht"></i></span>
-                        <!-- DECIMAL(10,2) => more than 99,999,999.99 จะผิด -->
                         <input type="number" class="form-control" name="price" id="price" min="0"
                             max="99999999.99" step="0.01" placeholder="เช่น 1999.00" value="{{ old('price') }}">
                     </div>
@@ -691,7 +413,7 @@
                 function setRating(v) {
                     const val = clampHalf(v);
                     range.value = val;
-                    hidden.value = val.toFixed(2); // DECIMAL(3,2) เช่น 4.50
+                    hidden.value = val.toFixed(2);
                     renderStars(val);
                 }
 
@@ -708,7 +430,6 @@
 
             /* ---------- client-side hard guards before submit ---------- */
             form.addEventListener('submit', function(e) {
-                // guard price vs price_type
                 if ((hiddenType.value || 'free') === 'paid') {
                     const v = clampPrice(priceInput.value);
                     if (!v && v !== 0) {
@@ -718,9 +439,8 @@
                     }
                     priceInput.value = v.toFixed(2);
                 } else {
-                    priceInput.value = ''; // free ไม่ส่งราคา
+                    priceInput.value = '';
                 }
-                // clamp category_id
                 const cat = form.querySelector('[name="category_id"]');
                 if (cat) {
                     let n = parseInt(cat.value || '0', 10);
@@ -728,7 +448,6 @@
                     if (n > 999999) n = 999999;
                     cat.value = n;
                 }
-                // trim lengthsให้ไม่เกิน schema
                 const t = form.querySelector('[name="title"]');
                 if (t && t.value.length > 200) t.value = t.value.slice(0, 200);
                 const prov = form.querySelector('[name="provider"]');

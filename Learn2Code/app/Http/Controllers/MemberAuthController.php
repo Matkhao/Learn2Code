@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/MemberAuthController.php
 
 namespace App\Http\Controllers;
 
@@ -15,7 +14,7 @@ use Illuminate\Validation\ValidationException;
 class MemberAuthController extends Controller
 {
     /** =========================================================
-     * Helpers: Normalization + Throttle
+     * Helpers Normalization + Throttle
      * =======================================================*/
 
     private function normalizeEmail(?string $email): string
@@ -40,7 +39,6 @@ class MemberAuthController extends Controller
             ]);
         }
 
-        // จอง 1 สิทธิ์ไว้ก่อน (จะล้างเมื่อสำเร็จ)
         RateLimiter::hit($key, $decaySeconds);
     }
 
@@ -53,7 +51,6 @@ class MemberAuthController extends Controller
     {
         if (!$u) return false;
 
-        // รองรับหลายรูปแบบของ is_admin (bool/int/string)
         $fromFlag = property_exists($u, 'is_admin')
             ? ((is_bool($u->is_admin) && $u->is_admin)
                 || (is_numeric($u->is_admin) && (int)$u->is_admin === 1)
@@ -63,7 +60,7 @@ class MemberAuthController extends Controller
         return $fromFlag
             || (int)($u->role_id ?? 0) === 1
             || (method_exists($u, 'isAdmin') && (bool)$u->isAdmin())
-            || (int)($u->user_id ?? 0) === 1; // สำรองกรณีไอดี 1
+            || (int)($u->user_id ?? 0) === 1;
     }
 
     /** =========================================================
@@ -72,7 +69,7 @@ class MemberAuthController extends Controller
 
     public function showLogin(Request $request)
     {
-        // ถ้าล็อกอินแล้ว และไม่มีแฟลก login_success → ส่งกลับหน้าที่เหมาะสม
+        // ถ้าล็อกอินแล้ว login_success
         if (Auth::guard('member')->check() && !$request->session()->has('login_success')) {
             $u = Auth::guard('member')->user();
             $isAdmin = $this->isAdminUser($u);
@@ -123,14 +120,12 @@ class MemberAuthController extends Controller
             'password.confirmed'    => 'รหัสผ่านยืนยันไม่ตรงกัน',
         ]);
 
-        // เตรียม payload ให้ทนทานต่อคอลัมน์ที่มี/ไม่มี
         $payload = [
             'name'     => strip_tags($request->name),
             'email'    => $request->email,
             'password' => Hash::make($request->password),
         ];
 
-        // แนวทาง: ใส่เฉพาะคอลัมน์ที่มีอยู่จริงในตาราง users
         if (Schema::hasColumn($usersTable, 'role_id')) {
             $payload['role_id'] = 2; // student
         }
@@ -146,7 +141,6 @@ class MemberAuthController extends Controller
         try {
             $member = Member::create($payload);
         } catch (\Throwable $e) {
-            // กันเคส race condition/DB error อื่น ๆ
             return back()->withErrors([
                 'email' => 'ไม่สามารถสมัครสมาชิกได้ กรุณาลองใหม่อีกครั้ง',
             ])->withInput();
@@ -158,7 +152,6 @@ class MemberAuthController extends Controller
 
         // กลับหน้า login เพื่อให้แสดง Success Modal หนึ่งครั้ง
         return redirect()->route('member.login')->with('login_success', true);
-        // หากต้องการส่งเข้าหน้าหลักทันที: return redirect()->intended('/');
     }
 
     /** =========================================================
@@ -182,10 +175,8 @@ class MemberAuthController extends Controller
             'password.min'      => 'รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร',
         ]);
 
-        // Rate limit: 5 ครั้ง/นาที ต่อ (อีเมล+IP)
         $this->ensureIsNotRateLimited($request, max: 5, decaySeconds: 60);
 
-        // ดึงผู้ใช้ก่อนเพื่อแจ้งสาเหตุแบบปลอดภัย
         $email     = $request->email;
         $member    = Member::where('email', $email)->first();
         $remember  = $request->boolean('remember');
@@ -218,24 +209,21 @@ class MemberAuthController extends Controller
         // ดำเนินการล็อกอิน
         if ($member && Auth::guard('member')->attempt(['email' => $email, 'password' => $request->password], $remember)) {
             $request->session()->regenerate();
-            $this->clearRateLimit($request); // สำเร็จแล้วล้างเคาน์เตอร์
+            $this->clearRateLimit($request);
 
-            // [ADMIN] เลือกหน้า redirect ตามสิทธิ์
             $u = Auth::guard('member')->user();
-            $isAdmin = $this->isAdminUser($u); // 🔧 เปลี่ยนมาใช้ helper เดียวกับ showLogin()
+            $isAdmin = $this->isAdminUser($u);
 
-            // เพิ่ม: ถ้าเป็นแอดมิน ให้ล็อกอินเข้า guard:admin ด้วย แล้วค่อยเข้า /admin/courses
             if ($isAdmin) {
                 if (!Auth::guard('admin')->check()) {
                     Auth::guard('admin')->login($u);
                 }
-                return redirect()->intended(route('admin.courses.index'));  // แอดมิน → หน้าจัดการคอร์ส
+                return redirect()->intended(route('admin.dashboard.index'));
             }
 
-            return redirect()->intended('/');                   // สมาชิกทั่วไป → หน้าเดิม/หน้าแรก
+            return redirect()->intended('/');
         }
 
-        // ล้มเหลว: คงเคาน์เตอร์ไว้ (หมดอายุเอง)
         return back()->withErrors([
             'email' => 'อีเมลหรือรหัสผ่านไม่ถูกต้อง',
         ])->onlyInput('email');
@@ -247,13 +235,11 @@ class MemberAuthController extends Controller
 
     public function logout(Request $request)
     {
-        // ออกจากทั้งสอง guard (ถ้ามี)
         Auth::guard('admin')->logout();
         Auth::guard('member')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // เด้งกลับหน้าหลัก หรือจะส่งไป login ก็ได้
         return redirect('/');
     }
 }

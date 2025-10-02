@@ -19,7 +19,7 @@ class CoursesController extends Controller
      * Utilities
      * =======================================================*/
 
-    // ปรับคะแนนให้อยู่ช่วง 0..5 และปัดครึ่งดาว
+    // ปรับคะแนนให้อยู่ช่วง 0.5 และปัดครึ่งดาว
     private function normalizeRating($v): float
     {
         $n = is_numeric($v) ? (float) $v : 0.0;
@@ -27,7 +27,6 @@ class CoursesController extends Controller
         return round($n * 2) / 2; // step 0.5
     }
 
-    // ราคา: free => 0, paid => ปัดทศนิยม 2 ตำแหน่ง และคุมเพดาน DECIMAL(10,2)
     private function normalizePrice(?string $type, $price): float
     {
         if (($type ?? 'free') === 'free') {
@@ -38,7 +37,7 @@ class CoursesController extends Controller
         return round($n, 2);
     }
 
-    // เก็บรูปหน้าปก (คืน path ใน disk 'public') หรือคืนค่าเดิมถ้าไม่อัปโหลดใหม่
+    // เก็บรูปหน้าปก
     private function storeCoverIfAny(Request $request, ?string $old = null): string
     {
         if ($request->hasFile('cover_img')) {
@@ -71,14 +70,14 @@ class CoursesController extends Controller
         }
     }
 
-    // ===== เพิ่มใหม่: คำนวณค่าเฉลี่ยจาก tbl_reviews แล้วอัปเดตลง tbl_courses.avg_rating =====
+    // ===== คำนวณค่าเฉลี่ยจาก tbl_reviews แล้วอัปเดตลง tbl_courses.avg_rating =====
     private function recalcAvgRating(int $courseId): void
     {
         $avg = DB::table('tbl_reviews')
             ->where('course_id', $courseId)
             ->avg('rating');
 
-        $avg = $avg === null ? 0 : round(((float) $avg) * 2) / 2; // ปัดครึ่งดาว .0/.5
+        $avg = $avg === null ? 0 : round(((float) $avg) * 2) / 2; // ปัดครึ่งดาว 0.5
 
         DB::table('tbl_courses')
             ->where('course_id', $courseId)
@@ -86,7 +85,7 @@ class CoursesController extends Controller
     }
 
     /* =========================================================
-     * FRONTEND (ตัวอย่างเดิม)
+     * FRONTEND
      * =======================================================*/
     public function frontend(Request $request)
     {
@@ -135,7 +134,7 @@ class CoursesController extends Controller
     }
 
     /* =========================================================
-     * LIST (หลังบ้าน) — ใช้กับ list.blade
+     * LIST (หลังบ้าน)
      * =======================================================*/
     public function index(Request $request)
     {
@@ -174,13 +173,12 @@ class CoursesController extends Controller
                 return $row;
             });
 
-            // หากผู้ใช้พิมพ์เลขหน้าที่เกิน ทำให้หน้าเปล่า → เด้งไปหน้าสุดท้าย
+            // หากผู้ใช้พิมพ์เลขหน้าที่เกิน ทำให้หน้าเปล่าเด้งไปหน้าสุดท้าย
             if ($courses->isEmpty() && $request->has('page') && (int) $request->get('page') > 1) {
                 return redirect()->fullUrlWithQuery(['page' => $courses->lastPage()]);
             }
 
             return view('courses.list', compact('courses'));
-
         } catch (\Exception $e) {
             \Log::error('CoursesController@index ERROR: ' . $e->getMessage(), [
                 'file' => $e->getFile(),
@@ -195,14 +193,13 @@ class CoursesController extends Controller
     }
 
     /* =========================================================
-     * FORM: CREATE (ส่ง dropdown หมวดหมู่ไปหน้าเพิ่มคอร์ส)
+     * FORM CREATE (ส่ง dropdown หมวดหมู่ไปหน้าเพิ่มคอร์ส)
      * =======================================================*/
     public function adding()
     {
         try {
             $categories = CategoryModel::orderBy('category_id', 'asc')->get(['category_id', 'name']);
         } catch (\Exception $e) {
-            // ถ้าไม่สามารถโหลด categories ได้ ให้ใช้ array ว่าง
             \Log::warning('Cannot load categories in adding(): ' . $e->getMessage());
             $categories = collect([]);
         }
@@ -211,7 +208,7 @@ class CoursesController extends Controller
     }
 
     /* =========================================================
-     * STORE (POST /courses) — รองรับ dropdown + validate exists
+     * STORE (POST /courses) รองรับ dropdown + validate exists
      * =======================================================*/
     public function create(Request $request)
     {
@@ -304,7 +301,7 @@ class CoursesController extends Controller
                 'cover_img'           => $data['cover_img'],
                 'course_url'          => $data['course_url'],
                 'avg_rating'          => $data['avg_rating'],
-                'created_at'          => now(), // ให้แน่ใจว่ามี "สร้างเมื่อ"
+                'created_at'          => now(), //
             ]);
 
             Alert::success('สำเร็จ', 'เพิ่มคอร์สเรียบร้อยแล้ว');
@@ -373,7 +370,7 @@ class CoursesController extends Controller
     }
 
     /* =========================================================
-     * UPDATE (PUT /courses/{id}) — รองรับ dropdown + validate exists
+     * UPDATE (PUT /courses/{id}) รองรับ dropdown + validate exists
      * =======================================================*/
     public function update($id, Request $request)
     {
@@ -448,7 +445,7 @@ class CoursesController extends Controller
             $data['description']   = $data['description'] ?? '';
             $data['duration_text'] = $data['duration_text'] ?? '';
 
-            // อัปโหลดรูปใหม่ (ถ้ามี)
+            // อัปโหลดรูปใหม่
             $data['cover_img'] = $this->storeCoverIfAny($request, $course->cover_img ?: '');
 
             // update
@@ -493,7 +490,7 @@ class CoursesController extends Controller
                 if (!empty($course->cover_img) && Storage::disk('public')->exists($course->cover_img)) {
                     Storage::disk('public')->delete($course->cover_img);
                 }
-            } catch (\Throwable $e) { /* ignore */
+            } catch (\Throwable $e) {
             }
 
             $course->delete();
@@ -512,7 +509,7 @@ class CoursesController extends Controller
     {
         $course = CoursesModel::findOrFail($id);
 
-        // ชื่อหมวดหมู่ (ถ้ามีตาราง tbl_categories)
+        // ชื่อหมวดหมู่ 
         $categoryName = DB::table('tbl_categories')
             ->where('category_id', $course->category_id)
             ->value('name');
@@ -552,7 +549,7 @@ class CoursesController extends Controller
         ));
     }
 
-    /** TOGGLE FAVORITE: เพิ่ม/ลบ รายการโปรด */
+    /** TOGGLE FAVORITE เพิ่ม/ลบ รายการโปรด */
     public function toggleFavorite(Request $request, $courseId)
     {
         $userId = \Illuminate\Support\Facades\Auth::guard('member')->id();
@@ -570,14 +567,13 @@ class CoursesController extends Controller
             DB::table('tbl_favorites')->insert(['user_id' => $userId, 'course_id' => $courseId, 'created_at' => now()]);
         }
 
-        // ถ้าขอ JSON (จาก fetch) → ส่ง 204 กลับไป เพื่อไม่ต้อง redirect
         if ($request->expectsJson()) {
             return response()->noContent(); // 204
         }
         return back();
     }
 
-    /** STORE REVIEW: บันทึกรีวิว + อัปเดตค่าเฉลี่ยลง courses */
+    /** STORE REVIEW บันทึกรีวิว + อัปเดตค่าเฉลี่ยลง courses */
     public function storeReview(Request $request, $courseId)
     {
         $userId = \Illuminate\Support\Facades\Auth::guard('member')->id();
@@ -592,7 +588,7 @@ class CoursesController extends Controller
             'comment.required' => 'กรุณาเขียนรีวิว',
         ]);
 
-        // มีรีวิวแล้ว → ไม่อนุญาตให้รีวิว/แก้ซ้ำ
+        // มีรีวิวแล้ว ไม่อนุญาตให้รีวิว/แก้ซ้ำ
         $exists = DB::table('tbl_reviews')
             ->where('user_id', $userId)
             ->where('course_id', $courseId)
@@ -600,7 +596,7 @@ class CoursesController extends Controller
 
         if ($exists) {
             return back()->withErrors([
-                // ผูกที่ 'comment' เพื่อให้ข้อความไปขึ้นใต้กล่องข้อความตาม Blade ปัจจุบัน
+                // เชื่อม comment เพื่อให้ข้อความไปขึ้นใต้กล่องข้อความตาม Blade ปัจจุบัน
                 'comment' => 'คุณได้รีวิวคอร์สนี้แล้ว ไม่สามารถรีวิวซ้ำหรือแก้ไขได้',
             ])->withInput();
         }
@@ -611,10 +607,9 @@ class CoursesController extends Controller
                 'course_id'  => $courseId,
                 'rating'     => (int) round($data['rating']),
                 'comment'    => trim($data['comment']),
-                'created_at' => now(),   // ตารางคุณไม่มี updated_at
+                'created_at' => now(),
             ]);
         } catch (\Illuminate\Database\QueryException $e) {
-            // กัน race condition: ถ้าชน unique key
             if ($e->getCode() === '23000') {
                 return back()->withErrors([
                     'comment' => 'คุณได้รีวิวคอร์สนี้แล้ว ไม่สามารถรีวิวซ้ำหรือแก้ไขได้',
@@ -623,14 +618,14 @@ class CoursesController extends Controller
             throw $e;
         }
 
-        // ===== เพิ่มใหม่: อัปเดตค่าเฉลี่ยของคอร์สทันทีหลังบันทึกรีวิว =====
+        // ===== อัปเดตค่าเฉลี่ยของคอร์สทันทีหลังบันทึกรีวิว =====
         $this->recalcAvgRating((int) $courseId);
 
         return back()->with('status', 'review_saved');
     }
 
     /* =========================================================
-     * FAVORITES PAGE (ใหม่) — แสดงรายการโปรดของผู้ใช้
+     * FAVORITES PAGE แสดงรายการโปรดของผู้ใช้
      * =======================================================*/
     public function favorites(Request $request)
     {
@@ -651,7 +646,7 @@ class CoursesController extends Controller
             ->select(
                 'tbl_courses.*',
                 'tbl_favorites.created_at as favored_at',
-                'tbl_courses.course_id as id' // ★ เพิ่ม alias ให้ Blade ใช้ $c->id ได้
+                'tbl_courses.course_id as id'
             );
 
         if ($q !== '') {

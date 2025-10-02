@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 29, 2025 at 10:17 AM
+-- Generation Time: Oct 02, 2025 at 04:49 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,30 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `learn2code`
 --
-
--- --------------------------------------------------------
-
---
--- Table structure for table `articles`
---
-
-CREATE TABLE `articles` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `excerpt` text DEFAULT NULL,
-  `content` longtext NOT NULL,
-  `featured_image` varchar(500) DEFAULT NULL,
-  `author` varchar(100) NOT NULL DEFAULT 'Learn2Code Team',
-  `tags` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`tags`)),
-  `status` enum('draft','published','archived') NOT NULL DEFAULT 'draft',
-  `views` int(11) NOT NULL DEFAULT 0,
-  `featured` tinyint(1) NOT NULL DEFAULT 0,
-  `slug` varchar(255) NOT NULL,
-  `meta_description` text DEFAULT NULL,
-  `published_at` timestamp NULL DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -234,11 +210,13 @@ CREATE TABLE `tbl_courses` (
 
 INSERT INTO `tbl_courses` (`course_id`, `title`, `category_id`, `provider`, `provider_instructor`, `level`, `language`, `price_type`, `price`, `duration_text`, `description`, `cover_img`, `course_url`, `avg_rating`, `created_at`) VALUES
 (1, 'Become to Front-end Developer2', 2, 'Learn2Code2', 'Natthaphong2', 'beginner', 'TH', 'free', 0.00, '6 สัปดาห์', 'เริ่มต้นสู่การเป็นนักพัฒนาเว็บไซต์\r\nBecome to Front-end Developer\r\nกับพื้นฐานที่สำคัญที่สุดของทักษะการสร้างเว็บสาย Front-End\r\nและ วิธีการคิดจาก Senior Programmer ที่มีประสบการณ์กว่า 10 ปี', 'uploads/courses/Xw9gVQ5UMVQbREZ378D0qSSf1BycYmOgVIOv8paw.jpg', 'https://www.borntodev.com/', 5.00, '2025-09-08 13:33:04'),
-(2, 'Complete Python3 Programming', 9, 'Learn2Code', 'Natthaphong', 'intermediate', 'EN', 'paid', 2790.00, '10 ชั่วโมง', 'เริ่มต้นเส้นทางการเขียนโปรแกรมแบบจัดเต็ม\r\nComplete Python3 Programming\r\nเพราะพื้นฐานสำคัญที่สุด ทำให้ต่อยอดได้ไม่รู้จบกับภาษา Python 3\r\nที่จะทำให้ทักษะการเขียนโปรแกรมของคุณเหนือกว่าใครตั้งแต่ก้าวแรก', 'uploads/courses/vVQhhGuSxf4QhppT431clnPIHDVkVICLljSjP9w8.jpg', 'https://school.borntodev.com/course/complete-python3-programming', 5.00, '2025-09-08 13:36:09'),
+(2, 'Complete Python3 Programming', 9, 'Learn2Code', 'Natthaphong', 'intermediate', 'EN', 'paid', 2790.00, '10 ชั่วโมง', 'เริ่มต้นเส้นทางการเขียนโปรแกรมแบบจัดเต็ม\r\nComplete Python3 Programming\r\nเพราะพื้นฐานสำคัญที่สุด ทำให้ต่อยอดได้ไม่รู้จบกับภาษา Python 3\r\nที่จะทำให้ทักษะการเขียนโปรแกรมของคุณเหนือกว่าใครตั้งแต่ก้าวแรก', 'uploads/courses/vVQhhGuSxf4QhppT431clnPIHDVkVICLljSjP9w8.jpg', 'https://school.borntodev.com/course/complete-python3-programming', 1.00, '2025-09-08 13:36:09'),
 (3, 'Fundamental Web Dev', 10, 'Learn2Code', 'Natthaphong', 'advanced', 'EN', 'paid', 690.00, '3 ชั่วโมง', 'เริ่มต้นเส้นทางนักออกแบบเว็บไซต์\r\nFundamental Web Dev With HTML5 & CSS3\r\nให้การสร้างเว็บไซต์เป็นเรื่องง่าย ๆ เปลี่ยนคนธรรมดาให้เข้าใจการทำงานของเว็บ\r\nถึงขั้นออกแบบ และ ประกอบอาชีพได้ครบจบในคอร์สเดียว', 'uploads/courses/gS6AxCXEd3ZN7uzcNmj1Iv9cFEivwbB9IIXSbbjN.jpg', 'https://www.borntodev.com/', 4.50, '2025-09-08 14:27:48'),
 (4, 'Game Development', 11, 'Learn2Code', 'Natthaphong', 'beginner', 'TH', 'paid', 1290.00, '5 ชั่วโมง', 'หลักสูตร Game Development with Unreal Engine 5 เป็นหลักสูตรออนไลน์ที่สอนวิธีสร้างเกมโดยใช้ Unreal Engine 5 ซึ่งเป็นเครื่องมือสร้างเกมอันทรงพลังที่ใช้สร้างเกม AAA เช่น Fortnite, PUBG และ Gears of War หลักสูตรนี้เหมาะสำหรับทั้งผู้เริ่มต้นและนักพัฒนาเกมที่มีประสบการณ์ที่ต้องการเรียนรู้เกี่ยวกับ Unreal Engine 5', 'uploads/courses/OTodo3crYznAKFYietBo57IpuzZJJnhQITb9ijBP.jpg', 'https://school.borntodev.com/course/game-development-with-unreal-engine-5', 5.00, '2025-09-08 14:29:06'),
 (5, 'Data Analytics with Python', 5, 'Learn2Code', 'Natthaphong', 'advanced', 'EN', 'paid', 12345.00, '3 ชั่วโมง', 'เข้าใจการวิเคราะห์ข้อมูลใน 2 สัปดาห์\r\nData Analytics With Python\r\nต่อยอดความรู้พื้นฐานการเขียนโปรแกรมด้วย Python ให้กลายเป็น\r\nการวิเคราะห์ข้อมูลขั้นเทพ สร้างคุณค่าให้กับโลก', 'uploads/courses/2zqI0H5ifv93KYj5ECuMYGcoigBnsKpbmgQhio7P.jpg', 'https://school.borntodev.com/course/data-analytics-with-python', 5.00, '2025-09-25 13:22:15'),
-(6, 'Mini Course : GitHub for Beginner', 16, 'Learn2Code', 'Natthaphong Matkhao', 'advanced', 'TH', 'paid', 2990.00, '1 ชั่วโมง', 'หมดยุคการเรียนรู้สุดน่าเบื่อ เพราะนี่คือโลกยุคใหม่แล้ว ! ให้ทุกการเรียนรู้สร้างแรงบันดาลใจให้คุณ\r\nเริ่มต้นจนถึงใช้งานจริงแบบมือโปรกับเครื่องมือสุดพลัง', 'uploads/courses/O8xWPsIAu9eZOXzFDfLezpsWyBuYU9nZmG0hKQhe.jpg', 'https://school.borntodev.com/course/mini-course-github-for-beginner', 2.00, '2025-09-25 13:54:21');
+(6, 'Mini Course : GitHub for Beginner', 16, 'Learn2Code', 'Natthaphong Matkhao', 'advanced', 'TH', 'paid', 2990.00, '1 ชั่วโมง', 'หมดยุคการเรียนรู้สุดน่าเบื่อ เพราะนี่คือโลกยุคใหม่แล้ว ! ให้ทุกการเรียนรู้สร้างแรงบันดาลใจให้คุณ\r\nเริ่มต้นจนถึงใช้งานจริงแบบมือโปรกับเครื่องมือสุดพลัง', 'uploads/courses/O8xWPsIAu9eZOXzFDfLezpsWyBuYU9nZmG0hKQhe.jpg', 'https://school.borntodev.com/course/mini-course-github-for-beginner', 2.00, '2025-09-25 13:54:21'),
+(23, 'Advanced SQL', 5, 'Learn2Code', 'Natthaphong', 'intermediate', 'TH', 'free', 0.00, '3 ชั่วโมง', 'คอร์ส Advanced SQL เหมาะสำหรับผู้ที่มีความรู้พื้นฐานเกี่ยวกับ SQL ในระดับที่พอสมควรแล้ว และต้องการที่จะพัฒนาทักษะการใช้ SQL ในระดับที่สูงขึ้น เพื่อนำไปใช้งานในการวิเคราะห์ข้อมูลต่างๆ ได้อย่างมีประสิทธิภาพ', 'uploads/courses/5jVbFNWKt2ZI3jhe4Zbj2PaeKPe6MBxo2tInnyzY.jpg', 'https://school.borntodev.com/', 0.50, '2025-10-01 21:03:08'),
+(24, 'Problem Solving for IT', 1, 'Learn2Code', 'Natthaphong', 'intermediate', 'TH', 'free', 0.00, 'x ชั่วโมง', 'หลักสูตร Problem Solving for IT มุ่งเน้นไปที่การพัฒนาทักษะการแก้ปัญหาสำหรับบุคลากรในสายงานไอที ผู้เรียนจะได้เรียนรู้ทฤษฎีและเทคนิคต่างๆ ที่สามารถนำไปประยุกต์ใช้กับปัญหาทาง IT ที่เกี่ยวกับงานของคุณ', 'uploads/courses/CcP0xn0dxp8uJceer5RRkD4fQDchOkPv5ym95j6A.jpg', 'https://school.borntodev.com/course/problem-solving-for-it', 4.00, '2025-10-01 21:04:59');
 
 -- --------------------------------------------------------
 
@@ -264,36 +242,8 @@ INSERT INTO `tbl_favorites` (`id`, `user_id`, `course_id`, `created_at`) VALUES
 (13, 3, 22, '2025-09-27 21:59:58'),
 (14, 3, 6, '2025-09-27 22:40:46'),
 (15, 4, 5, '2025-09-28 08:50:24'),
-(16, 4, 1, '2025-09-28 13:40:01');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tbl_product`
---
-
-CREATE TABLE `tbl_product` (
-  `id` int(11) NOT NULL,
-  `product_name` varchar(200) NOT NULL,
-  `product_detail` text NOT NULL,
-  `product_price` float(10,2) NOT NULL,
-  `product_img` varchar(200) NOT NULL,
-  `dateCreate` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tbl_product`
---
-
-INSERT INTO `tbl_product` (`id`, `product_name`, `product_detail`, `product_price`, `product_img`, `dateCreate`) VALUES
-(1, 'Test1', '1234567890', 123.00, 'uploads/product/JExacHzaKJwjGR2kRZHd83REiNGDoAAFZj1de3Lf.png', '2025-09-07 23:52:18'),
-(2, 'Test2', '1234567890', 123.00, 'uploads/product/JExacHzaKJwjGR2kRZHd83REiNGDoAAFZj1de3Lf.png', '2025-09-07 23:52:18'),
-(3, 'Test3', '1234567890', 123.00, 'uploads/product/JExacHzaKJwjGR2kRZHd83REiNGDoAAFZj1de3Lf.png', '2025-09-07 23:52:18'),
-(4, 'Test4', '1234567890', 123.00, 'uploads/product/JExacHzaKJwjGR2kRZHd83REiNGDoAAFZj1de3Lf.png', '2025-09-07 23:52:18'),
-(5, 'Test5', '1234567890', 123.00, 'uploads/product/JExacHzaKJwjGR2kRZHd83REiNGDoAAFZj1de3Lf.png', '2025-09-07 23:52:18'),
-(6, 'Test6', '1234567890', 123.00, 'uploads/product/JExacHzaKJwjGR2kRZHd83REiNGDoAAFZj1de3Lf.png', '2025-09-07 23:52:18'),
-(7, 'Test7', '1234567890', 123.00, 'uploads/product/JExacHzaKJwjGR2kRZHd83REiNGDoAAFZj1de3Lf.png', '2025-09-07 23:52:18'),
-(8, 'Test8', '1234567890', 123.00, 'uploads/product/JExacHzaKJwjGR2kRZHd83REiNGDoAAFZj1de3Lf.png', '2025-09-07 23:52:18');
+(16, 4, 1, '2025-09-28 13:40:01'),
+(17, 22, 2, '2025-10-02 14:05:55');
 
 -- --------------------------------------------------------
 
@@ -316,7 +266,8 @@ CREATE TABLE `tbl_reviews` (
 
 INSERT INTO `tbl_reviews` (`review_id`, `course_id`, `user_id`, `rating`, `comment`, `created_at`) VALUES
 (4, 6, 3, 1, 'test', '2025-09-27 21:28:05'),
-(5, 6, 4, 3, 'Test', '2025-09-27 21:28:34');
+(5, 6, 4, 3, 'Test', '2025-09-27 21:28:34'),
+(6, 2, 22, 1, 'test', '2025-10-02 14:05:50');
 
 -- --------------------------------------------------------
 
@@ -360,8 +311,21 @@ CREATE TABLE `tbl_users` (
 --
 
 INSERT INTO `tbl_users` (`user_id`, `role_id`, `name`, `email`, `password`, `avatar_url`, `created_at`, `updated_at`) VALUES
-(3, 1, 'bfr1end', 'ma.natthaphong.infj@gmail.com', '$2y$12$S/di1awYmeRwycc2aud2yeYbgn.Qq0/OCY8b3iASuit/XrBFG1u3.', NULL, '2025-09-27 15:42:17', '2025-09-27 22:50:32'),
-(4, 2, 'arashi3659', 'test@gmail.com', '$2y$12$mSfIO/vK1yFo5/cYvHI9bOFckWG2kMFKQc1.V/CU0T6syAHC2kTFe', NULL, '2025-09-27 16:58:04', '2025-09-27 16:58:04');
+(4, 2, 'arashi3659', 'test@gmail.com', '$2y$12$mSfIO/vK1yFo5/cYvHI9bOFckWG2kMFKQc1.V/CU0T6syAHC2kTFe', NULL, '2025-09-27 16:58:04', '2025-09-27 16:58:04'),
+(6, 2, 'test1345', 'test1@gmail.com', '$2y$12$S/di1awYmeRwycc2aud2yeYbgn.Qq0/OCY8b3iASuit/XrBFG1u3.', NULL, '2025-09-27 15:42:17', '2025-10-02 10:59:13'),
+(7, 1, 'test2', 'test2@gmail.com', '$2y$12$S/di1awYmeRwycc2aud2yeYbgn.Qq0/OCY8b3iASuit/XrBFG1u3.', NULL, '2025-09-27 15:42:17', '2025-09-27 22:50:32'),
+(8, 2, 'test3', 'test3@gmail.com', '$2y$12$S/di1awYmeRwycc2aud2yeYbgn.Qq0/OCY8b3iASuit/XrBFG1u3.', NULL, '2025-09-27 15:42:17', '2025-10-02 10:58:21'),
+(9, 1, 'test4', 'test4@gmail.com', '$2y$12$S/di1awYmeRwycc2aud2yeYbgn.Qq0/OCY8b3iASuit/XrBFG1u3.', NULL, '2025-09-27 15:42:17', '2025-09-27 22:50:32'),
+(10, 1, 'test5', 'test5@gmail.com', '$2y$12$S/di1awYmeRwycc2aud2yeYbgn.Qq0/OCY8b3iASuit/XrBFG1u3.', NULL, '2025-09-27 15:42:17', '2025-09-27 22:50:32'),
+(11, 1, 'test7', 'test7@gmail.com', '$2y$12$S/di1awYmeRwycc2aud2yeYbgn.Qq0/OCY8b3iASuit/XrBFG1u3.', NULL, '2025-09-27 15:42:17', '2025-10-02 08:57:21'),
+(12, 1, 'test8', 'test8@gmail.com', '$2y$12$S/di1awYmeRwycc2aud2yeYbgn.Qq0/OCY8b3iASuit/XrBFG1u3.', NULL, '2025-09-27 15:42:17', '2025-10-02 08:57:23'),
+(13, 1, 'test9', 'test9@gmail.com', '$2y$12$S/di1awYmeRwycc2aud2yeYbgn.Qq0/OCY8b3iASuit/XrBFG1u3.', NULL, '2025-09-27 15:42:17', '2025-10-02 08:57:25'),
+(14, 1, 'test10', 'test10@gmail.com', '$2y$12$S/di1awYmeRwycc2aud2yeYbgn.Qq0/OCY8b3iASuit/XrBFG1u3.', NULL, '2025-09-27 15:42:17', '2025-10-02 08:57:29'),
+(15, 1, 'test11', 'test11@gmail.com', '$2y$12$S/di1awYmeRwycc2aud2yeYbgn.Qq0/OCY8b3iASuit/XrBFG1u3.', NULL, '2025-09-27 15:42:17', '2025-10-02 08:57:31'),
+(20, 1, '3213213213213', '3213213213213@gmail.com', '$2y$12$r5Tlw7CW3G6mRSS4rbx98uM9uHxIk9E9RQ3.NsSAZw1P34xOr/u6i', NULL, '2025-10-02 10:11:29', '2025-10-02 10:11:29'),
+(22, 1, 'Natthaphong', 'ma.natthaphong.infj@gmail.com', '$2y$12$OLcjKaFYGo0mOZWlensk7OOy/GFmxUgS.2IXt7TGvDWzcBrjM0OTu', NULL, '2025-10-02 10:17:55', '2025-10-02 10:17:55'),
+(23, 2, '3213123', '3213123dasdasdsa@gmail.com', '$2y$12$GGnpTRY4juC2KnOg2B8TYeTtUx3Dkz.UWJrNlwgoJun5UjtDKbcbi', NULL, '2025-10-02 11:06:37', '2025-10-02 11:06:56'),
+(24, 1, 'op321ip', 'op@gmail.com312321321', '$2y$12$YDA04SeKS8cPHuKh9doxyulWXbfR/Fk4kqksi13LFW7nRPvSim10u', NULL, '2025-10-02 11:07:41', '2025-10-02 11:24:30');
 
 -- --------------------------------------------------------
 
@@ -383,16 +347,6 @@ CREATE TABLE `users` (
 --
 -- Indexes for dumped tables
 --
-
---
--- Indexes for table `articles`
---
-ALTER TABLE `articles`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `articles_slug_unique` (`slug`),
-  ADD KEY `articles_status_published_at_index` (`status`,`published_at`),
-  ADD KEY `articles_featured_published_at_index` (`featured`,`published_at`),
-  ADD KEY `articles_slug_index` (`slug`);
 
 --
 -- Indexes for table `cache`
@@ -469,12 +423,6 @@ ALTER TABLE `tbl_favorites`
   ADD UNIQUE KEY `uniq_user_course` (`user_id`,`course_id`);
 
 --
--- Indexes for table `tbl_product`
---
-ALTER TABLE `tbl_product`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `tbl_reviews`
 --
 ALTER TABLE `tbl_reviews`
@@ -509,12 +457,6 @@ ALTER TABLE `users`
 --
 
 --
--- AUTO_INCREMENT for table `articles`
---
-ALTER TABLE `articles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
@@ -542,25 +484,19 @@ ALTER TABLE `tbl_categories`
 -- AUTO_INCREMENT for table `tbl_courses`
 --
 ALTER TABLE `tbl_courses`
-  MODIFY `course_id` bigint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `course_id` bigint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `tbl_favorites`
 --
 ALTER TABLE `tbl_favorites`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
-
---
--- AUTO_INCREMENT for table `tbl_product`
---
-ALTER TABLE `tbl_product`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `tbl_reviews`
 --
 ALTER TABLE `tbl_reviews`
-  MODIFY `review_id` bigint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `review_id` bigint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `tbl_roles`
@@ -572,7 +508,7 @@ ALTER TABLE `tbl_roles`
 -- AUTO_INCREMENT for table `tbl_users`
 --
 ALTER TABLE `tbl_users`
-  MODIFY `user_id` bigint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `user_id` bigint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `users`

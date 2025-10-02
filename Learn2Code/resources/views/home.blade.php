@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+Thai:wght@100..900&display=swap"
         rel="stylesheet">
-
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/Assets/Learn2Code_Transparent.png') }}">
     <style>
         :root {
             --bg: #0a0c10;
@@ -119,7 +119,6 @@
 
 <body>
     @php
-        /** ---------- Resolve error data ---------- */
         $status =
             (int) ($code ??
                 (isset($exception) && method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 500));
