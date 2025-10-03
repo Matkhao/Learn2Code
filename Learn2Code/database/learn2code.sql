@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 02, 2025 at 04:49 PM
+-- Generation Time: Oct 03, 2025 at 05:21 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -214,9 +214,9 @@ INSERT INTO `tbl_courses` (`course_id`, `title`, `category_id`, `provider`, `pro
 (3, 'Fundamental Web Dev', 10, 'Learn2Code', 'Natthaphong', 'advanced', 'EN', 'paid', 690.00, '3 ชั่วโมง', 'เริ่มต้นเส้นทางนักออกแบบเว็บไซต์\r\nFundamental Web Dev With HTML5 & CSS3\r\nให้การสร้างเว็บไซต์เป็นเรื่องง่าย ๆ เปลี่ยนคนธรรมดาให้เข้าใจการทำงานของเว็บ\r\nถึงขั้นออกแบบ และ ประกอบอาชีพได้ครบจบในคอร์สเดียว', 'uploads/courses/gS6AxCXEd3ZN7uzcNmj1Iv9cFEivwbB9IIXSbbjN.jpg', 'https://www.borntodev.com/', 4.50, '2025-09-08 14:27:48'),
 (4, 'Game Development', 11, 'Learn2Code', 'Natthaphong', 'beginner', 'TH', 'paid', 1290.00, '5 ชั่วโมง', 'หลักสูตร Game Development with Unreal Engine 5 เป็นหลักสูตรออนไลน์ที่สอนวิธีสร้างเกมโดยใช้ Unreal Engine 5 ซึ่งเป็นเครื่องมือสร้างเกมอันทรงพลังที่ใช้สร้างเกม AAA เช่น Fortnite, PUBG และ Gears of War หลักสูตรนี้เหมาะสำหรับทั้งผู้เริ่มต้นและนักพัฒนาเกมที่มีประสบการณ์ที่ต้องการเรียนรู้เกี่ยวกับ Unreal Engine 5', 'uploads/courses/OTodo3crYznAKFYietBo57IpuzZJJnhQITb9ijBP.jpg', 'https://school.borntodev.com/course/game-development-with-unreal-engine-5', 5.00, '2025-09-08 14:29:06'),
 (5, 'Data Analytics with Python', 5, 'Learn2Code', 'Natthaphong', 'advanced', 'EN', 'paid', 12345.00, '3 ชั่วโมง', 'เข้าใจการวิเคราะห์ข้อมูลใน 2 สัปดาห์\r\nData Analytics With Python\r\nต่อยอดความรู้พื้นฐานการเขียนโปรแกรมด้วย Python ให้กลายเป็น\r\nการวิเคราะห์ข้อมูลขั้นเทพ สร้างคุณค่าให้กับโลก', 'uploads/courses/2zqI0H5ifv93KYj5ECuMYGcoigBnsKpbmgQhio7P.jpg', 'https://school.borntodev.com/course/data-analytics-with-python', 5.00, '2025-09-25 13:22:15'),
-(6, 'Mini Course : GitHub for Beginner', 16, 'Learn2Code', 'Natthaphong Matkhao', 'advanced', 'TH', 'paid', 2990.00, '1 ชั่วโมง', 'หมดยุคการเรียนรู้สุดน่าเบื่อ เพราะนี่คือโลกยุคใหม่แล้ว ! ให้ทุกการเรียนรู้สร้างแรงบันดาลใจให้คุณ\r\nเริ่มต้นจนถึงใช้งานจริงแบบมือโปรกับเครื่องมือสุดพลัง', 'uploads/courses/O8xWPsIAu9eZOXzFDfLezpsWyBuYU9nZmG0hKQhe.jpg', 'https://school.borntodev.com/course/mini-course-github-for-beginner', 2.00, '2025-09-25 13:54:21'),
+(6, 'Mini Course : GitHub for Beginner', 16, 'Learn2Code', 'Natthaphong Matkhao', 'advanced', 'TH', 'paid', 2990.00, '1 ชั่วโมง', 'หมดยุคการเรียนรู้สุดน่าเบื่อ เพราะนี่คือโลกยุคใหม่แล้ว ! ให้ทุกการเรียนรู้สร้างแรงบันดาลใจให้คุณ\r\nเริ่มต้นจนถึงใช้งานจริงแบบมือโปรกับเครื่องมือสุดพลัง', 'uploads/courses/O8xWPsIAu9eZOXzFDfLezpsWyBuYU9nZmG0hKQhe.jpg', 'https://school.borntodev.com/course/mini-course-github-for-beginner', 3.00, '2025-09-25 13:54:21'),
 (23, 'Advanced SQL', 5, 'Learn2Code', 'Natthaphong', 'intermediate', 'TH', 'free', 0.00, '3 ชั่วโมง', 'คอร์ส Advanced SQL เหมาะสำหรับผู้ที่มีความรู้พื้นฐานเกี่ยวกับ SQL ในระดับที่พอสมควรแล้ว และต้องการที่จะพัฒนาทักษะการใช้ SQL ในระดับที่สูงขึ้น เพื่อนำไปใช้งานในการวิเคราะห์ข้อมูลต่างๆ ได้อย่างมีประสิทธิภาพ', 'uploads/courses/5jVbFNWKt2ZI3jhe4Zbj2PaeKPe6MBxo2tInnyzY.jpg', 'https://school.borntodev.com/', 0.50, '2025-10-01 21:03:08'),
-(24, 'Problem Solving for IT', 1, 'Learn2Code', 'Natthaphong', 'intermediate', 'TH', 'free', 0.00, 'x ชั่วโมง', 'หลักสูตร Problem Solving for IT มุ่งเน้นไปที่การพัฒนาทักษะการแก้ปัญหาสำหรับบุคลากรในสายงานไอที ผู้เรียนจะได้เรียนรู้ทฤษฎีและเทคนิคต่างๆ ที่สามารถนำไปประยุกต์ใช้กับปัญหาทาง IT ที่เกี่ยวกับงานของคุณ', 'uploads/courses/CcP0xn0dxp8uJceer5RRkD4fQDchOkPv5ym95j6A.jpg', 'https://school.borntodev.com/course/problem-solving-for-it', 4.00, '2025-10-01 21:04:59');
+(24, 'Problem Solving for IT', 1, 'Learn2Code', 'Natthaphong', 'intermediate', 'TH', 'free', 0.00, 'x ชั่วโมง', 'หลักสูตร Problem Solving for IT มุ่งเน้นไปที่การพัฒนาทักษะการแก้ปัญหาสำหรับบุคลากรในสายงานไอที ผู้เรียนจะได้เรียนรู้ทฤษฎีและเทคนิคต่างๆ ที่สามารถนำไปประยุกต์ใช้กับปัญหาทาง IT ที่เกี่ยวกับงานของคุณ', 'uploads/courses/CcP0xn0dxp8uJceer5RRkD4fQDchOkPv5ym95j6A.jpg', 'https://school.borntodev.com/course/problem-solving-for-it', 3.00, '2025-10-01 21:04:59');
 
 -- --------------------------------------------------------
 
@@ -243,7 +243,9 @@ INSERT INTO `tbl_favorites` (`id`, `user_id`, `course_id`, `created_at`) VALUES
 (14, 3, 6, '2025-09-27 22:40:46'),
 (15, 4, 5, '2025-09-28 08:50:24'),
 (16, 4, 1, '2025-09-28 13:40:01'),
-(17, 22, 2, '2025-10-02 14:05:55');
+(18, 22, 23, '2025-10-02 15:20:27'),
+(19, 22, 6, '2025-10-02 15:20:52'),
+(20, 22, 24, '2025-10-03 14:33:20');
 
 -- --------------------------------------------------------
 
@@ -267,7 +269,9 @@ CREATE TABLE `tbl_reviews` (
 INSERT INTO `tbl_reviews` (`review_id`, `course_id`, `user_id`, `rating`, `comment`, `created_at`) VALUES
 (4, 6, 3, 1, 'test', '2025-09-27 21:28:05'),
 (5, 6, 4, 3, 'Test', '2025-09-27 21:28:34'),
-(6, 2, 22, 1, 'test', '2025-10-02 14:05:50');
+(6, 2, 22, 1, 'test', '2025-10-02 14:05:50'),
+(7, 6, 22, 5, 'test', '2025-10-02 15:20:46'),
+(8, 24, 22, 3, 'คอร์สเรียนที่น่าสนใจ', '2025-10-03 14:33:42');
 
 -- --------------------------------------------------------
 
@@ -325,7 +329,7 @@ INSERT INTO `tbl_users` (`user_id`, `role_id`, `name`, `email`, `password`, `ava
 (20, 1, '3213213213213', '3213213213213@gmail.com', '$2y$12$r5Tlw7CW3G6mRSS4rbx98uM9uHxIk9E9RQ3.NsSAZw1P34xOr/u6i', NULL, '2025-10-02 10:11:29', '2025-10-02 10:11:29'),
 (22, 1, 'Natthaphong', 'ma.natthaphong.infj@gmail.com', '$2y$12$OLcjKaFYGo0mOZWlensk7OOy/GFmxUgS.2IXt7TGvDWzcBrjM0OTu', NULL, '2025-10-02 10:17:55', '2025-10-02 10:17:55'),
 (23, 2, '3213123', '3213123dasdasdsa@gmail.com', '$2y$12$GGnpTRY4juC2KnOg2B8TYeTtUx3Dkz.UWJrNlwgoJun5UjtDKbcbi', NULL, '2025-10-02 11:06:37', '2025-10-02 11:06:56'),
-(24, 1, 'op321ip', 'op@gmail.com312321321', '$2y$12$YDA04SeKS8cPHuKh9doxyulWXbfR/Fk4kqksi13LFW7nRPvSim10u', NULL, '2025-10-02 11:07:41', '2025-10-02 11:24:30');
+(25, 2, 'test', '12345@gmail.com', '$2y$12$y.eYYUjrOorLD/dn6qXLcem6Xc07XPlI9vSV0k0Frur/ukzLqkH8e', NULL, '2025-10-02 15:22:14', '2025-10-02 15:22:14');
 
 -- --------------------------------------------------------
 
@@ -484,19 +488,19 @@ ALTER TABLE `tbl_categories`
 -- AUTO_INCREMENT for table `tbl_courses`
 --
 ALTER TABLE `tbl_courses`
-  MODIFY `course_id` bigint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `course_id` bigint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `tbl_favorites`
 --
 ALTER TABLE `tbl_favorites`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `tbl_reviews`
 --
 ALTER TABLE `tbl_reviews`
-  MODIFY `review_id` bigint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `review_id` bigint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `tbl_roles`
@@ -508,7 +512,7 @@ ALTER TABLE `tbl_roles`
 -- AUTO_INCREMENT for table `tbl_users`
 --
 ALTER TABLE `tbl_users`
-  MODIFY `user_id` bigint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `user_id` bigint(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `users`

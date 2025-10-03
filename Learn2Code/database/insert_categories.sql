@@ -1,5 +1,4 @@
 -- ข้อมูลตัวอย่างสำหรับ tbl_categories
--- เพื่อแก้ปัญหา foreign key และ dropdown ในหน้า admin
 
 INSERT INTO `tbl_categories` (`category_id`, `name`, `icon`, `created_at`) VALUES
 (1, 'Frontend Development', 'fas fa-code', NOW()),
